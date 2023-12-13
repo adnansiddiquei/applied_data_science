@@ -27,19 +27,24 @@
     \includegraphics[width=0.9\textwidth]{./figures/q1b}
     \caption{A biplot of the first two principal components in the dataset.
         The coloured arrows indicate the first two principal component loading vectors for every feature which contributes to
-        either principal component more than 2.5\%. The loading vectors use the right and top axis of the plot. The blue dots
-        indicate the scores for each observation in the dataset for the first two principal components. For reference, the
-        loading vectors for the first 20 features are also plotted, with some features in black and some in gray. The black
-        loading vectors correspond to the dotted KDEs in Fig\eqref{fig:q1a}.}
+        either principal component more than 2\%, these are the most discriminative features.
+        Every other loading vector has been plotted in very light grey so their general directions and magnitudes are
+        visible.
+        The loading vectors for the first 20 features have also been plotted in darker black lines, with the dotted
+        black lines corresponding to the dotted KDEs in Fig\eqref{fig:q1a}.
+        The loading vectors use the right and top axis of the plot.
+        The blue dots indicate the scores for each observation in the dataset for the first two principal components.
+        The scores use the left and bottom axis of the plot.
+        All four axis are symmetric about the origin for ease of comparison.}
     \label{fig:q1b}
     \end{figure}
 
-    Fig\eqref{fig:q1a} indicates that the features are all on a similar scale, so the features do not need to be scaled
-    before applying PCA.
-    The biplot in Fig\eqref{fig:q1b} shows a PCA of the entire dataset.
-    The coloured arrays indicating the loadings of the features which contribute more than 2.5\% to either principal
-    component show that none of the first 20 features contribute more than 2.5\% to either principal component.
-    This implies that none of the first 20 features vary very much within the dataset, and as such, are not particularly
-    discriminative.
-    The 9 features which contribute more than 2.5\% to either principal component are likely to be the most discriminative
-    features in the dataset, and as such, the most useful for classification algorithms.
+    The biplot in Fig\eqref{fig:q1b} shows a PCA of the entire dataset, after standardisation has been applied to each
+    feature.
+    The coloured arrows indicate the loadings of the features which contribute more than 2\% to either principal
+    component, which implies that none of the first 20 features are particularly discriminative.
+    An interesting observation is that the most discriminative features are very disciminative with respect to the
+    second principal component, whereas the less discriminative features (of which there are many, many more of) are
+    more discriminative with respect to the first principal component.
+    As a result, the scores on the biplot for the observations w.r.t. the first two principal components separate the
+    observations more along the first principal component, rather than the second.
