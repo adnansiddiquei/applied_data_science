@@ -10,7 +10,7 @@ from matplotlib.patches import FancyArrowPatch
 
 def q1b():
     data = load_dataset('A_NoiseAdded.csv')
-    data = data.drop(['Unnamed: 0'], axis=1)
+    data = data.drop(['Unnamed: 0', 'classification'], axis=1)
 
     data = StandardScaler().fit_transform(data)
 
