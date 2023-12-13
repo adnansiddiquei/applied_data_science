@@ -24,30 +24,22 @@
 
     \begin{figure}[htb]
     \centering
-    \begin{subfigure}[b]{0.9\linewidth}
-        \includegraphics[width=0.9\textwidth]{figures/q1b-1}
-        \caption{A biplot of the first two principal components in the dataset.
-        The arrows indicate the first two principal component loading vectors for every feature which contributes to
-        either principal component more than 1\%. The loading vectors use the right and top axis of the plot. The blue dots
-        indicate the scores for each observation in the dataset for the first two principal components.}
-        \label{fig:q1b-1}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[b]{0.9\linewidth}
-        \includegraphics[width=0.9\linewidth]{figures/q1b-2}
-        \caption{A line plot of the explained variance ratio for the first 12 principal components.}
-        \label{fig:q1b-2}
-    \end{subfigure}
-    \caption{Two plots illustrating the results of a PCA of the first 20 features of the \inlinecode{A_NoiseAdded.csv}
-    dataset.}
+    \includegraphics[width=0.9\textwidth]{./figures/q1b}
+    \caption{A biplot of the first two principal components in the dataset.
+        The coloured arrows indicate the first two principal component loading vectors for every feature which contributes to
+        either principal component more than 2.5\%. The loading vectors use the right and top axis of the plot. The blue dots
+        indicate the scores for each observation in the dataset for the first two principal components. For reference, the
+        loading vectors for the first 20 features are also plotted, with some features in black and some in gray. The black
+        loading vectors correspond to the dotted KDEs in Fig\eqref{fig:q1a}.}
     \label{fig:q1b}
     \end{figure}
 
     Fig\eqref{fig:q1a} indicates that the features are all on a similar scale, so the features do not need to be scaled
     before applying PCA.
-    The biplot in Fig\eqref{fig:q1b-1} shows a PCA of the first 20 features of the dataset, as predicted, the 7 features
-    identified in the Fig\eqref{fig:q1a} are the most discriminative, as they are amongst the 9 features in the biplot
-    that contribute more than 1\% to either principal component.
-    Features 18 and 19 are the most discriminative, as they contribute the most to the principal components.
-    However, Fig\eqref{fig:q1b-2} shows the explained variance ratio for the first 12 principal components, and it can
-    be seen that the first 2 principal components with the first 20 features only explain 31.2\% of the variance in the dataset.
+    The biplot in Fig\eqref{fig:q1b} shows a PCA of the entire dataset.
+    The coloured arrays indicating the loadings of the features which contribute more than 2.5\% to either principal
+    component show that none of the first 20 features contribute more than 2.5\% to either principal component.
+    This implies that none of the first 20 features vary very much within the dataset, and as such, are not particularly
+    discriminative.
+    The 9 features which contribute more than 2.5\% to either principal component are likely to be the most discriminative
+    features in the dataset, and as such, the most useful for classification algorithms.
