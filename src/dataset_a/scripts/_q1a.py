@@ -2,15 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-from ...utils import format_axes
+from src.utils import format_axes, load_dataset
 
 
 def q1a():
-    # Get the current working directory of this file
-    cwd = os.path.dirname(os.path.realpath(__file__))
-
-    # Read the dataset
-    data = pd.read_csv(os.path.join(cwd, '../../datasets/A_NoiseAdded.csv'))
+    data = load_dataset('A_NoiseAdded.csv')
     data = data.drop(['Unnamed: 0'], axis=1)
 
     # Plot the KDE of the first 20 Features
@@ -34,17 +30,22 @@ def q1a():
 
     # Plot the KDE of the first 20 features
     for i, feature in enumerate(features):
-        if i + 1 in [5, 18, 19, 20, 14, 11]:
+        if i + 1 in [5, 18, 19, 20, 14, 11, 13]:
             c = {
-                5: 'red',
-                18: 'blue',
-                19: 'orange',
-                20: 'purple',
-                14: 'aquamarine',
-                11: 'slategray',
+                5: 'b',
+                11: 'y',
+                13: 'gray',
+                14: 'm',
+                18: 'g',
+                19: 'r',
+                20: 'c',
             }
             data[feature].plot(
-                kind='density', label=f'* {feature}', color=c[i + 1], ax=ax2
+                kind='density',
+                label=f'* {feature}',
+                color=c[i + 1],
+                ax=ax2,
+                linestyle=':',
             )
         else:
             data[feature].plot(kind='density', label=feature, color=colors[i], ax=ax2)
@@ -65,4 +66,5 @@ def q1a():
     plt.autoscale(enable=True, axis='x', tight=True)
     plt.xlim(-2, 8)
 
+    cwd = os.path.dirname(os.path.realpath(__file__))
     plt.savefig(os.path.join(cwd, '../outputs/q1a.png'), bbox_inches='tight')
