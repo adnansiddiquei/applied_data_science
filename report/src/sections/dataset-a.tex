@@ -25,7 +25,7 @@
     \begin{figure}[htb]
     \centering
     \includegraphics[width=0.9\textwidth]{./figures/q1b}
-    \caption{A biplot of the first two principal components in the dataset.
+    \caption{A biplot of the first two principal components in the \inlinecode{A_NoiseAdded.csv} dataset.
         The coloured arrows indicate the first two principal component loading vectors for every feature which contributes to
         either principal component more than 2\%, these are the most discriminative features.
         Every other loading vector has been plotted in very light grey so their general directions and magnitudes are
@@ -48,3 +48,26 @@
     more discriminative with respect to the first principal component.
     As a result, the scores on the biplot for the observations w.r.t. the first two principal components separate the
     observations more along the first principal component, rather than the second.
+
+\subsubsection{Question 1c}\label{subsubsec:q1c}
+    \begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/q1c}
+    \caption{A contingency table for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset, with $k=8$,
+        the default \inlinecode{scikit-learn} value.}
+    \label{fig:q1c}
+    \end{figure}
+
+    Fig\eqref{fig:q1c} shows the contingency table for two k-means clusterings of the dataset.
+    The two clusterings were formed by training two k-means models on half of the dataset, and then the other half were
+    mapped onto the learned clusters.
+    K-means works computing a centroid for each cluster such that the sum of the squared distances between each centroid
+    and the observations in the cluster is minimised, there are several algorithms for computing centroid positions.
+    Predictions are then made by assigning new observations to the cluster whose centroid is closest to the
+    observation \cite{sklearn-k-means}.
+
+    The contingency table indicates that the two clusterings are very dissimilar as the majority of the observations
+    lie outside the leading diagonal.
+    This indicates that $k=8$ is a bad choice for this dataset - the dataset is labelled and as such it is known
+    that $k=3$ for this dataset, so a poor clustering as indicated by the contingency table is expected.
+    The contingency table also indicates that the clustering is not very stable, as the majority of the observations
