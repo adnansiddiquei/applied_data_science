@@ -9,3 +9,5 @@ dependencies:
   - pre-commit
   - scikit-learn
   - pandas
+  - matplotlib
+  - seaborn
