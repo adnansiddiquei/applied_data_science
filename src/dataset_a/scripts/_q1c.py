@@ -1,6 +1,7 @@
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import pandas as pd
 from src.utils import load_dataset, format_contingency_table
@@ -14,7 +15,11 @@ warnings.filterwarnings('ignore')
 
 def q1c():
     data = load_dataset('A_NoiseAdded.csv')
-    data = data.drop(['Unnamed: 0'], axis=1)
+    data = data.drop(['Unnamed: 0', 'classification'], axis=1)
+
+    data = pd.DataFrame(
+        StandardScaler().fit_transform(data.values), columns=data.columns
+    )
 
     # Split the data into two equal-sized samples
     train_set_1, train_set_2 = train_test_split(data, test_size=0.5, random_state=3438)
@@ -69,7 +74,7 @@ def q1c():
     cwd = os.path.dirname(os.path.realpath(__file__))
 
     plt.savefig(
-        os.path.join(cwd, '../outputs/q1c-contingency-table.png'),
+        os.path.join(cwd, '../outputs/q1c.png'),
         bbox_inches='tight',
         dpi=500,
     )
