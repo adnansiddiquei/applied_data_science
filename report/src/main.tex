@@ -1,0 +1,56 @@
+%! Author = adnansiddiquei
+%! Date = 13/12/2023
+
+% Preamble
+\documentclass[a4paper,11pt]{article}
+\pdfoutput=1
+
+% Packages
+\usepackage{jcappub}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{roboto}
+\usepackage{subcaption}
+
+\newcommand{\inlinecode}[1]{\lstinline{#1}}
+\lstset{basicstyle=\fontfamily{pcr}\selectfont}
+
+
+\title{\boldmath M1: Applied Data Science - Coursework Assignment}
+
+
+% %simple case: 2 authors, same institution
+\author{Adnan Siddiquei}
+\affiliation{University of Cambridge}
+
+% e-mail addresses: one for each author, in the same order as the authors
+\emailAdd{as3438@cam.ac.uk}
+
+
+\begin{document}
+\maketitle
+\flushbottom
+
+
+\section{Section A}\label{sec:section-a}
+\input{sections/dataset-a}
+\input{sections/dataset-b}
+\input{sections/dataset-c}
+
+\section{Section B}\label{sec:section-b}
+
+
+
+\begin{thebibliography}{99}
+
+%\bibitem{ruff-repo}
+%Astral,
+%\textit{\inlinecode{ruff} GitHub Repository}.
+%Available at: \url{https://github.com/astral-sh/ruff}
+%[Accessed: 7-Dec-2023].
+
+\end{thebibliography}
+
+
+
+\end{document}
