@@ -2,15 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-from ...utils import format_axes
+from src.utils import format_axes, load_dataset
 
 
 def q1a():
-    # Get the current working directory of this file
-    cwd = os.path.dirname(os.path.realpath(__file__))
-
-    # Read the dataset
-    data = pd.read_csv(os.path.join(cwd, '../../datasets/A_NoiseAdded.csv'))
+    data = load_dataset('A_NoiseAdded.csv')
     data = data.drop(['Unnamed: 0'], axis=1)
 
     # Plot the KDE of the first 20 Features
@@ -65,4 +61,5 @@ def q1a():
     plt.autoscale(enable=True, axis='x', tight=True)
     plt.xlim(-2, 8)
 
+    cwd = os.path.dirname(os.path.realpath(__file__))
     plt.savefig(os.path.join(cwd, '../outputs/q1a.png'), bbox_inches='tight')

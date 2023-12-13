@@ -1,5 +1,12 @@
 from matplotlib.ticker import AutoMinorLocator
 from matplotlib.axes import Axes
+import pandas as pd
+import os
+
+
+def load_dataset(dataset: str):
+    cwd = os.path.dirname(os.path.realpath(__file__))
+    return pd.read_csv(os.path.join(cwd, f'../datasets/{dataset}'))
 
 
 def format_axes(ax: Axes, **kwargs):

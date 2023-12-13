@@ -1,7 +1,8 @@
 %! Author = adnansiddiquei
 %! Date = 13/12/2023
 
-\subsection{Dataset A}\label{sec:dataset-a}
+\subsection{Dataset A}\label{subsec:dataset-a}
+\subsubsection{Question 1a}\label{subsubsec:q1a}
     \begin{figure}[htb]
     \centering
     \includegraphics[width=0.9\textwidth]{./figures/q1a}
@@ -13,7 +14,7 @@
     \label{fig:q1a}
     \end{figure}
 
-    Fig\ref{fig:q1a} shows the combined and separated kernal density estimates of the first 20 features of the dataset.
+    Fig\eqref{fig:q1a} shows the combined and separated kernal density estimates of the first 20 features of the dataset.
     Several conclusions can be drawn from this plot.
     For most of the features, the KDE is concentrated around the zero value, with the exception of features 5, 11, 14,
     18, 19 and 20.
@@ -21,3 +22,7 @@
     Feature 5 is concentrated around a value of 4.5, whilst the other 5 of these discriminative features are more widely
     spread around the range of values, which gives them more potential to be more discriminative in classification
     algorithms.
+
+\subsubsection{Question 1b}\label{subsubsec:q1b}
+    Fig\eqref{fig:q1a} indicates that the features are all on a similar scale, so the features do not need to be scaled
+    before applying PCA.
