@@ -30,17 +30,22 @@ def q1a():
 
     # Plot the KDE of the first 20 features
     for i, feature in enumerate(features):
-        if i + 1 in [5, 18, 19, 20, 14, 11]:
+        if i + 1 in [5, 18, 19, 20, 14, 11, 13]:
             c = {
-                5: 'red',
-                18: 'blue',
-                19: 'orange',
-                20: 'purple',
-                14: 'aquamarine',
-                11: 'slategray',
+                5: 'b',
+                11: 'y',
+                13: 'gray',
+                14: 'm',
+                18: 'g',
+                19: 'r',
+                20: 'c',
             }
             data[feature].plot(
-                kind='density', label=f'* {feature}', color=c[i + 1], ax=ax2
+                kind='density',
+                label=f'* {feature}',
+                color=c[i + 1],
+                ax=ax2,
+                linestyle=':',
             )
         else:
             data[feature].plot(kind='density', label=feature, color=colors[i], ax=ax2)
