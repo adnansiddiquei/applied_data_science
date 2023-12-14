@@ -4,15 +4,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from matplotlib import colormaps as cmaps
-from sklearn.preprocessing import StandardScaler
 from matplotlib.patches import FancyArrowPatch
 
 
 def q1b():
-    data = load_dataset('A_NoiseAdded.csv')
-    data = data.drop(['Unnamed: 0', 'classification'], axis=1)
-
-    data = StandardScaler().fit_transform(data)
+    data = load_dataset(
+        'A_NoiseAdded.csv',
+        drop_columns=['Unnamed: 0', 'classification'],
+        standardise=True,
+    )
 
     pca = PCA(n_components=2)
     pca.fit(data)
