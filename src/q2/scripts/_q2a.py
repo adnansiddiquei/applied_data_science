@@ -12,7 +12,7 @@ def q2a():
     # Get the counts of each classification
     counts = pd.DataFrame(classifications.value_counts(dropna=False))
     counts.loc[-1] = counts.sum()
-    counts.index = ['1', '2', '3', 'Missing', 'Total']
+    counts.index = ['1', '2', '4', 'Missing', 'Total']
     counts.index = ['    ' + index + '    ' for index in counts.index]
     counts.columns = ['Count']
 
