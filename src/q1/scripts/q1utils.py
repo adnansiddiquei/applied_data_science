@@ -122,7 +122,7 @@ def format_contingency_table(
     # Highlight the cells based on their value with a color map
     tbl.auto_set_font_size(False)
     tbl.set_fontsize(12)
-    tbl.scale(1.2, 1.2)  # You can set the scale of the table here
+    tbl.scale(1.2, 1.2)
 
     # Color grade cell from white to blue based on how large the value is
     for key, cell in tbl.get_celld().items():
