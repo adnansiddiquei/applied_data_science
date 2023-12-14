@@ -1,8 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 import numpy as np
-from src.utils import format_axes, load_dataset
+from src.utils import format_axes, load_dataset, save_fig
 
 
 def q1a():
@@ -67,5 +66,4 @@ def q1a():
     plt.autoscale(enable=True, axis='x', tight=True)
     plt.xlim(-2, 8)
 
-    cwd = os.path.dirname(os.path.realpath(__file__))
-    plt.savefig(os.path.join(cwd, '../outputs/q1a.png'), bbox_inches='tight')
+    save_fig(__file__, 'q1a.png')

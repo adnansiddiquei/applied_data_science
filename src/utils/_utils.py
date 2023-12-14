@@ -1,8 +1,15 @@
+import numpy as np
 from matplotlib.ticker import AutoMinorLocator
 from matplotlib.axes import Axes
 import pandas as pd
 import os
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+
+def save_fig(script_filepath: str, name: str, **kwargs):
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
+    plt.savefig(os.path.join(cwd, f'../outputs/{name}'), bbox_inches='tight', **kwargs)
 
 
 def load_dataset(
@@ -15,9 +22,21 @@ def load_dataset(
         data = data.drop(drop_columns, axis=1)
 
     if standardise:
-        data = pd.DataFrame(
-            StandardScaler().fit_transform(data.values), columns=data.columns
-        )
+        if 'classification' in data.columns:
+            # Don't standardise the classification column if it is still in the dataset
+            data = pd.DataFrame(
+                np.column_stack(
+                    [
+                        StandardScaler().fit_transform(data.values[:, 0:-1]),
+                        data.values[:, -1],
+                    ]
+                ),
+                columns=data.columns,
+            )
+        else:
+            data = pd.DataFrame(
+                StandardScaler().fit_transform(data.values), columns=data.columns
+            )
 
     return data
 

@@ -1,8 +1,7 @@
 from sklearn.decomposition import PCA
-from src.utils import load_dataset, format_axes
+from src.utils import load_dataset, format_axes, save_fig
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 from matplotlib import colormaps as cmaps
 from matplotlib.patches import FancyArrowPatch
 
@@ -95,16 +94,4 @@ def q1b():
     ax.set_xlabel('Principal Component 1')
     ax.set_ylabel('Principal Component 2')
 
-    # Split the legends into two parts
-    # split = 20
-    # handles, labels = plt.gca().get_legend_handles_labels()
-    # first_legend = plt.legend(
-    #     handles=handles[:split], labels=labels[:split], loc='best', facecolor='white'
-    # )
-    # plt.gca().add_artist(first_legend)
-    # plt.legend(
-    #     handles=handles[split:], labels=labels[split:], loc='lower left', facecolor='white'
-    # )
-
-    cwd = os.path.dirname(os.path.realpath(__file__))
-    plt.savefig(os.path.join(cwd, '../outputs/q1b.png'), bbox_inches='tight')
+    save_fig(__file__, 'q1b.png')
