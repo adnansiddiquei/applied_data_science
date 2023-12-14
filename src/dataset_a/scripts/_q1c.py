@@ -63,13 +63,29 @@ def q1c():
     )
 
     # Create the contingency table
-    contingency_table = confusion_matrix(kmeans_1_all.values, kmeans_2_all.values)
+    _contingency_table = confusion_matrix(kmeans_1_all.values, kmeans_2_all.values)
 
-    format_contingency_table(
-        contingency_table,
-        columns=[f'Cluster {i + 1}' for i in range(contingency_table.shape[1])],
-        index=[f'Cluster {i + 1}' for i in range(contingency_table.shape[0])],
+    contingency_table = pd.DataFrame(_contingency_table)
+    contingency_table.loc[8] = np.sum(_contingency_table, axis=0)
+    contingency_table[8] = np.append(np.sum(_contingency_table, axis=1), [0])
+
+    tbl = format_contingency_table(
+        contingency_table.values,
+        columns=[
+            f'Cluster {i + 1}' for i in range(contingency_table.values.shape[1] - 1)
+        ]
+        + ['Total'],
+        index=[f'Cluster {i + 1}' for i in range(contingency_table.values.shape[0] - 1)]
+        + ['Total'],
     )
+
+    # Make the bottom right cell dissappear
+    tbl.get_celld()[(9, 8)].set_text_props(color='white')
+
+    # Make the last row and column bold
+    for i in range(len(contingency_table)):
+        tbl[(i + 1, 8)].set_text_props(weight='bold')
+        tbl[(9, i)].set_text_props(weight='bold')
 
     cwd = os.path.dirname(os.path.realpath(__file__))
 
