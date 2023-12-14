@@ -3,6 +3,12 @@ from matplotlib.axes import Axes
 import pandas as pd
 import os
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+
+
+def save_fig(script_filepath: str, name: str, **kwargs):
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
+    plt.savefig(os.path.join(cwd, f'../outputs/{name}'), bbox_inches='tight', **kwargs)
 
 
 def load_dataset(

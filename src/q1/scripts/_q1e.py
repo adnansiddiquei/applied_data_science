@@ -1,9 +1,8 @@
 from .q1utils import kmeans_on_dataset_a
-from src.utils import format_axes, load_dataset
+from src.utils import format_axes, load_dataset, save_fig
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 import pandas as pd
-import os
 
 
 def q1e():
@@ -58,5 +57,4 @@ def q1e():
     format_axes(ax[0])
     format_axes(ax[1])
 
-    cwd = os.path.dirname(os.path.realpath(__file__))
-    plt.savefig(os.path.join(cwd, '../outputs/q1e.png'), bbox_inches='tight')
+    save_fig(__file__, 'q1e.png')
