@@ -49,25 +49,55 @@
     As a result, the scores on the biplot for the observations w.r.t. the first two principal components separate the
     observations more along the first principal component, rather than the second.
 
-\subsubsection{Question 1c}\label{subsubsec:q1c}
+\subsubsection{Questions 1c and 1d}\label{subsubsec:q1c}
     \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.9\textwidth]{./figures/q1c}
-    \caption{A contingency table for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset, with $k=8$,
-        the default \inlinecode{scikit-learn} value.}
-    \label{fig:q1c}
+    \begin{subfigure}[b]{0.9\linewidth}
+        \includegraphics[width=1\textwidth]{./figures/q1c}
+        \caption{A contingency table for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset, with $k=8$,
+            the default \inlinecode{scikit-learn} value. 240 of the 408 observations lie on the leading diagonal.}
+        \label{fig:q1c}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.9\linewidth}
+        \includegraphics[width=1\textwidth]{./figures/q1d}
+        \caption{A contingency table for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset, with $k=3$.
+            281 of the 408 observations lie on the leading diagonal.}
+        \label{fig:q1d}
+    \end{subfigure}
+    \caption{Contingency tables for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset with number of
+        clusters $k=3$ and $k=8$.
+        Each feature in the dataset was standardised before clustering.
+        \inlinecode{kmeans_1} totals are on the right and \inlinecode{kmeans_2} totals are on the bottom.}
+    \label{fig:q1cb}
     \end{figure}
 
-    Fig\eqref{fig:q1c} shows the contingency table for two k-means clusterings of the dataset.
-    The two clusterings were formed by training two k-means models on half of the dataset, and then the other half were
-    mapped onto the learned clusters.
-    K-means works computing a centroid for each cluster such that the sum of the squared distances between each centroid
-    and the observations in the cluster is minimised, there are several algorithms for computing centroid positions.
+    Fig\eqref{fig:q1c} shows the contingency table for two k-means clusterings of the dataset with $k=8$ and $k=3$.
+    The two clusterings (\inlinecode{kmeans_1} and \inlinecode{kmeans_2}) were formed by training two k-means models on
+    half of the dataset, and then the other half were mapped onto the learned clusters.
+    Standardisation was applied to each feature before clustering as k-means is sensitive to feature scaling, this is because
+    k-means works by computing a centroid for each cluster such that the sum of the squared Euclidean distances between
+    each centroid and the observations in the cluster is minimised.
+    Therefore, without standardisation, features with larger variances and scale will dominate the clustering.
     Predictions are then made by assigning new observations to the cluster whose centroid is closest to the
     observation \cite{sklearn-k-means}.
+    Crucially, the labels assigned to each cluster from each k-means computation are arbitrary, therefore, the labels
+    in \inlinecode{kmeans_2} were mapped back to the labels in \inlinecode{kmeans_1} by finding which centroids in each
+    clustering were closest to each other.
+    This step was crucial, otherwise the contingency table would be meaningless.
 
-    The contingency table indicates that the two clusterings are very dissimilar as the majority of the observations
-    lie outside the leading diagonal.
-    This indicates that $k=8$ is a bad choice for this dataset - the dataset is labelled and as such it is known
-    that $k=3$ for this dataset, so a poor clustering as indicated by the contingency table is expected.
-    The contingency table also indicates that the clustering is not very stable, as the majority of the observations
+    For $k=8$, 59\% of the observations lie on the leading diagonal, which indicates that the two clusterings were not very
+    similar or stable, as a large proportion of the observations were assigned to different clusters in each clustering.
+    \inlinecode{kmeans_1} clustered 85\% of the observations into clusters 1, 2 and 3.
+    \inlinecode{kmeans_2} clustered 86\% of the observations into clusters 1 and 2.
+    This indicates that both clusterings identified most of the data lives within a small set of clusters, which was
+    expected as the dataset is labelled and so it is known that there are only 3 clusters - both clusterings identified
+    at least 2 similar clusters (1 and 2).
+    However, the presence of very small clusters indicates that there may be outliers present in the dataset or smaller
+    clusters that the large $k=8$ is overfitting to.
+
+    Fig\eqref{fig:q1d} shows the contingency table for two k-means clusterings of the dataset with $k=3$.
+    A larger proportion of the observations lie on the leading diagonal compared to $k=8$, which is expected because
+    the number of clusters is both smaller and equal to the actual number of clusters in the dataset.
+    \inlinecode{kmeans_2} identified 3 distinct clusters whereas \inlinecode{kmeans_1} only identified 2 distinct
+    clusters with a few remnant observations in assigned to cluster 2.

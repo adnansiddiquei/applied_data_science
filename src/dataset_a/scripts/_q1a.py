@@ -6,8 +6,9 @@ from src.utils import format_axes, load_dataset
 
 
 def q1a():
-    data = load_dataset('A_NoiseAdded.csv')
-    data = data.drop(['Unnamed: 0', 'classification'], axis=1)
+    data = load_dataset(
+        'A_NoiseAdded.csv', drop_columns=['Unnamed: 0', 'classification']
+    )
 
     # Plot the KDE of the first 20 Features
     features = data.columns[0:20]
