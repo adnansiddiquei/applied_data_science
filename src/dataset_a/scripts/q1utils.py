@@ -19,7 +19,9 @@ def kmeans_on_dataset_a(n_clusters, random_state):
     )
 
     # Split the data into two equal-sized samples
-    train_set_1, train_set_2 = train_test_split(data, test_size=0.5, random_state=3438)
+    train_set_1, train_set_2 = train_test_split(
+        data, test_size=0.5, random_state=random_state
+    )
 
     # Fit a k-means model on each training set
     kmeans_1 = KMeans(random_state=random_state, n_clusters=n_clusters)
@@ -87,7 +89,7 @@ def kmeans_on_dataset_a(n_clusters, random_state):
         + ['Total'],
     )
 
-    # Make the bottom right cell dissappear
+    # Make the bottom right cell disappear
     tbl.get_celld()[(n_clusters + 1, n_clusters)].set_text_props(color='white')
 
     # Make the last row and column bold
@@ -95,7 +97,7 @@ def kmeans_on_dataset_a(n_clusters, random_state):
         tbl[(i + 1, n_clusters)].set_text_props(weight='bold')
         tbl[(n_clusters + 1, i)].set_text_props(weight='bold')
 
-    return _contingency_table, tbl
+    return _contingency_table, tbl, kmeans_1_all, kmeans_2_all
 
 
 def format_contingency_table(
