@@ -27,7 +27,8 @@
 
     Fig.\eqref{fig:q2a} shows the summary of classifications for the \inlinecode{B_NoiseAdded.csv} dataset.
     It was identified that the dataset contained 20 duplicated observations (a total of 40 observations involved in the
-    duplication), and 10 of these duplicates contained different labels across the two duplicates.
+    duplication), and 10 of these duplicates contained different labels across the two duplicates. See Appendix
+    \ref{appendix:q2} for the full list of duplicates.
     The correct assignment for this mislabelling was determined using multinomal logistic regression on the labelled data
     to predict the labels on the mislabelled data.
     Multinomal logistic regression was then used again to predict the labels for the 20 missing observations, and
@@ -45,6 +46,5 @@
     missing not at random (MNAR) is when the likelihood of the label missing is in some way correlated with the value
     of the label.
     Looking at the 4th number in the brackets of Fig.\eqref{fig:q2bd}, which shows the number of observations that
-    entered each classification after imputing the missing labels, it can be seen that no class had
-    a significantly disproportionate number of observations enter it after imputation, indicating that the missing
-    labels are likely MAR.
+    entered each classification after imputing the missing labels, classifications 1 and 2 had significantly more
+    missing labels than classification 4, possibly indicating MNAR.
