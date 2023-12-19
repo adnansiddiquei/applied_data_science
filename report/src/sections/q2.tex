@@ -16,9 +16,9 @@
       \centering
       \includegraphics[width=0.55\linewidth]{./figures/q2b_q2d}
       \caption{\inlinecode{B_NoiseAdded.csv} after pre-processing, no missing labels or duplicated observations.
-        The 4 numbers in the brackets indicate how the count in each classification changed due to, in order: 1 -
-        count exiting class due to mislabelling; 2 - count entering class due to mislabelling; 3 - count exiting
-        after dropping duplicates; 4 - count entering after imputation of missing labels.}
+        The 4 numbers in the brackets indicate how the count in each classification changed due to, in order: 1 and 2
+        are counts exiting and entering (respectively) the class after correcting for mislabelling; 3 -
+        count exiting after dropping duplicates; 4 - count entering after imputation of missing labels.}
       \label{fig:q2bd}
     \end{subfigure}
     \caption{Summary of classifications for the \inlinecode{B_NoiseAdded.csv} dataset before and after pre-processing.}
@@ -45,6 +45,6 @@
     Missing at random (MAR) is when the likelihood that a label is missing is independent of the label itself, and
     missing not at random (MNAR) is when the likelihood of the label missing is in some way correlated with the value
     of the label.
-    Looking at the 4th number in the brackets of Fig.\eqref{fig:q2bd}, which shows the number of observations that
-    entered each classification after imputing the missing labels, classifications 1 and 2 had significantly more
-    missing labels than classification 4, possibly indicating MNAR.
+    Looking at the 4th number in the brackets of Fig.\eqref{fig:q2bd}, the missing labels in each class as percentages
+    of the total count in the respective classes are 4.5\%, 6.1\% and 2.9\% (for 1, 2, and 4 respectively).
+    This gives no significant indication of MNAR.
