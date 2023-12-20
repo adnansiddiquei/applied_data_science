@@ -1,5 +1,7 @@
-from .scripts import q3a, q3c
+from .scripts import q3a, q3c, q3c_optimise_knn_imputer, q3d_and_q3e
 
 if __name__ == '__main__':
-    q3a()
-    q3c()
+    # q3a()
+    # q3c()
+    # q3c_optimise_knn_imputer()
+    q3d_and_q3e()

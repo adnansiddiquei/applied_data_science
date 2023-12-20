@@ -1,15 +1,20 @@
 from sklearn.impute import KNNImputer, SimpleImputer
 from src.utils import load_dataset, load_dict_from_json, save_fig
+from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
+import os
 
 
 def q3c():
     # Load dataset
     data = load_dataset('C_MissingFeatures.csv', ['Unnamed: 0'])
     data, classifications = data[data.columns[:-1]], data['classification']
+
+    scaler = StandardScaler()
+    data = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
 
     # Load the results from q3a, the columns and rows with NaN values
     q3a_results = load_dict_from_json(__file__, 'q3a.json')
@@ -18,8 +23,8 @@ def q3c():
         q3a_results['columns_with_nan'],
     )
 
-    # Impute the missing values using KNNImputer, with default k=5
-    knn_imputer = KNNImputer()
+    # Impute the missing values using KNNImputer, with optimal value computed in q3c_optimise_knn_imputer.py
+    knn_imputer = KNNImputer(n_neighbors=15)
 
     # Also impute the data with a static mean imputation for comparison
     mean_imputer = SimpleImputer(strategy='mean')
@@ -57,7 +62,21 @@ def q3c():
     knn_imputed_data = knn_imputed_data.sort_index()
     mean_imputed_data = mean_imputed_data.sort_index()
 
-    affected_data = knn_imputed_data.loc[rows_with_nan][columns_with_nan]
+    # Invert the standardisation
+    data = pd.DataFrame(scaler.inverse_transform(data), columns=data.columns)
+    knn_imputed_data = pd.DataFrame(
+        scaler.inverse_transform(knn_imputed_data), columns=data.columns
+    )
+    mean_imputed_data = pd.DataFrame(
+        scaler.inverse_transform(mean_imputed_data), columns=data.columns
+    )
+
+    knn_imputed_data['classification'] = classifications
+    mean_imputed_data['classification'] = classifications
+
+    affected_data = knn_imputed_data.loc[rows_with_nan][
+        columns_with_nan + ['classification']
+    ]
 
     # Note that the sample numbers differ to row index numbers, because sample 1 refers to row 0
     affected_data.index = affected_data.index + 1
@@ -85,14 +104,14 @@ def q3c():
         mean_imputed_data_var = np.var(mean_imputed_data[c])
 
         analysis.loc[c, 'Var(KNN) / Var(orig) %'] = (
-            100 * (knn_imputed_data_var - orig_data_var) / orig_data_var
-        )
+            knn_imputed_data_var / orig_data_var
+        ) * 100
         analysis.loc[c, 'Var(mean) / Var(orig) %'] = (
-            100 * (mean_imputed_data_var - orig_data_var) / orig_data_var
-        )
+            mean_imputed_data_var / orig_data_var
+        ) * 100
         analysis.loc[c, 'Var(KNN) / Var(mean) %'] = (
-            100 * (knn_imputed_data_var - mean_imputed_data_var) / mean_imputed_data_var
-        )
+            knn_imputed_data_var / mean_imputed_data_var
+        ) * 100
 
         analysis.loc[c, 'KS(orig, KNN)'] = stats.ks_2samp(
             data[c], knn_imputed_data[c]
@@ -110,4 +129,10 @@ def q3c():
     for i, col in enumerate(analysis.columns):
         tbl[(0, i)].set_height(0.09)
 
+    # Save outputs
     save_fig(__file__, 'q3c_2.png')
+
+    cwd = os.path.dirname(os.path.realpath(__file__))
+    knn_imputed_data.round(9).to_csv(
+        os.path.join(cwd, '../outputs/knn_imputed_data.csv')
+    )
