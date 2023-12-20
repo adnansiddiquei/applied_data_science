@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 import os
+from .q3utils import identify_most_discriminative_features, knn_impute_nans
 
 
 def q3c():
@@ -14,7 +15,7 @@ def q3c():
     data, classifications = data[data.columns[:-1]], data['classification']
 
     scaler = StandardScaler()
-    data = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+    scaled_data = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
 
     # Load the results from q3a, the columns and rows with NaN values
     q3a_results = load_dict_from_json(__file__, 'q3a.json')
@@ -29,46 +30,16 @@ def q3c():
     # Also impute the data with a static mean imputation for comparison
     mean_imputer = SimpleImputer(strategy='mean')
 
-    # This will store "data" with the missing values imputed
-    knn_imputed_data = pd.DataFrame(columns=data.columns)
-    mean_imputed_data = pd.DataFrame(columns=data.columns)
-
-    # Loop through each classification and impute the missing values, using KNN
-    for c in classifications.unique():
-        # Get the data that belongs to classification c
-        data_in_classification = data[classifications == c]
-
-        # Impute the missing values with KNN
-        imputed_data_in_classification = pd.DataFrame(
-            knn_imputer.fit_transform(data_in_classification),
-            index=data_in_classification.index,
-            columns=data_in_classification.columns,
-        )
-
-        # Impute the missing values with mean
-        mean_imputed_data_in_classification = pd.DataFrame(
-            mean_imputer.fit_transform(data_in_classification),
-            index=data_in_classification.index,
-            columns=data_in_classification.columns,
-        )
-
-        knn_imputed_data = pd.concat(
-            [knn_imputed_data, imputed_data_in_classification], axis=0
-        )
-        mean_imputed_data = pd.concat(
-            [mean_imputed_data, mean_imputed_data_in_classification], axis=0
-        )
-
-    knn_imputed_data = knn_imputed_data.sort_index()
-    mean_imputed_data = mean_imputed_data.sort_index()
-
-    # Invert the standardisation
-    data = pd.DataFrame(scaler.inverse_transform(data), columns=data.columns)
-    knn_imputed_data = pd.DataFrame(
-        scaler.inverse_transform(knn_imputed_data), columns=data.columns
+    # Identify the most discriminative features for the KNN imputation, to reduce the dimensionality of the data
+    discriminative_features = list(
+        identify_most_discriminative_features(data.dropna()).index
     )
+
+    knn_imputed_data = knn_impute_nans(data, discriminative_features)
+
     mean_imputed_data = pd.DataFrame(
-        scaler.inverse_transform(mean_imputed_data), columns=data.columns
+        scaler.inverse_transform(mean_imputer.fit_transform(scaled_data)),
+        columns=data.columns,
     )
 
     knn_imputed_data['classification'] = classifications
@@ -96,7 +67,7 @@ def q3c():
     analysis['Var(KNN) / Var(orig) %'] = 0.0
     analysis['Var(mean) / Var(orig) %'] = 0.0
     analysis['Var(KNN) / Var(mean) %'] = 0.0
-    analysis['KS(orig, KNN)'] = 0.0
+    analysis['KS(orig, KNN) p-val'] = 0.5
 
     for c in columns_with_nan:
         orig_data_var = np.var(data[c])
@@ -113,7 +84,7 @@ def q3c():
             knn_imputed_data_var / mean_imputed_data_var
         ) * 100
 
-        analysis.loc[c, 'KS(orig, KNN)'] = stats.ks_2samp(
+        analysis.loc[c, 'KS(orig, KNN) p-val'] = stats.ks_2samp(
             data[c], knn_imputed_data[c]
         ).pvalue
 
@@ -134,5 +105,5 @@ def q3c():
 
     cwd = os.path.dirname(os.path.realpath(__file__))
     knn_imputed_data.round(9).to_csv(
-        os.path.join(cwd, '../outputs/knn_imputed_data.csv')
+        os.path.join(cwd, '../outputs/q3c_missing_data_imputed.csv')
     )
