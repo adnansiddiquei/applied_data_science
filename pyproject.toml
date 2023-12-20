@@ -2,6 +2,9 @@
 # Assume Python 3.12
 target-version = "py312"
 
+# Skip unused variable rules (`F841`).
+ignore = ["F841"]
+
 [tool.ruff.lint]
 # Enable Pyflakes (`F`), a subset of the pycodestyle (`E`) codes, pycodestyle warnings (`W`)
 # and McCabe complexity (`C901`). This will mimic the default flake8 configuration for linting.

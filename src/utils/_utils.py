@@ -5,10 +5,35 @@ import pandas as pd
 import os
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import json
+
+
+def save_dict_to_json(dict: dict, script_filepath: str, name: str):
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
+
+    if not os.path.exists(os.path.join(cwd, '../outputs')):
+        os.makedirs(os.path.join(cwd, '../outputs'))
+
+    with open(os.path.join(cwd, f'../outputs/{name}'), 'w') as f:
+        json.dump(dict, f, indent=4)
+
+
+def load_dict_from_json(script_filepath: str, name: str):
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
+
+    if not os.path.exists(os.path.join(cwd, '../outputs')):
+        os.makedirs(os.path.join(cwd, '../outputs'))
+
+    with open(os.path.join(cwd, f'../outputs/{name}'), 'r') as f:
+        return json.load(f)
 
 
 def save_fig(script_filepath: str, name: str, **kwargs):
     cwd = os.path.dirname(os.path.realpath(script_filepath))
+
+    if not os.path.exists(os.path.join(cwd, '../outputs')):
+        os.makedirs(os.path.join(cwd, '../outputs'))
+
     plt.savefig(os.path.join(cwd, f'../outputs/{name}'), bbox_inches='tight', **kwargs)
 
 
