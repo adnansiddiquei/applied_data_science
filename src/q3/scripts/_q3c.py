@@ -24,9 +24,6 @@ def q3c():
         q3a_results['columns_with_nan'],
     )
 
-    # Impute the missing values using KNNImputer, with optimal value computed in q3c_optimise_knn_imputer.py
-    knn_imputer = KNNImputer(n_neighbors=15)
-
     # Also impute the data with a static mean imputation for comparison
     mean_imputer = SimpleImputer(strategy='mean')
 
@@ -64,29 +61,29 @@ def q3c():
 
     # Now we want to analyse how this imputation has affected the data
     analysis = pd.DataFrame(index=columns_with_nan)
-    analysis['Var(KNN) / Var(orig) %'] = 0.0
-    analysis['Var(mean) / Var(orig) %'] = 0.0
-    analysis['Var(KNN) / Var(mean) %'] = 0.0
-    analysis['KS(orig, KNN) p-val'] = 0.5
+    analysis['Var(KNN) / Var(orig) %'] = ''
+    analysis['Var(mean) / Var(orig) %'] = ''
+    analysis['Var(KNN) / Var(mean) %'] = ''
+    analysis['KS(orig, KNN) p-val'] = ''
 
     for c in columns_with_nan:
         orig_data_var = np.var(data[c])
         knn_imputed_data_var = np.var(knn_imputed_data[c])
         mean_imputed_data_var = np.var(mean_imputed_data[c])
 
-        analysis.loc[c, 'Var(KNN) / Var(orig) %'] = (
+        analysis.loc[c, 'Var(KNN) / Var(orig) %'] = f'{(
             knn_imputed_data_var / orig_data_var
-        ) * 100
-        analysis.loc[c, 'Var(mean) / Var(orig) %'] = (
+        ) * 100:.2f}'
+        analysis.loc[c, 'Var(mean) / Var(orig) %'] = f'{(
             mean_imputed_data_var / orig_data_var
-        ) * 100
-        analysis.loc[c, 'Var(KNN) / Var(mean) %'] = (
+        ) * 100:.2f}'
+        analysis.loc[c, 'Var(KNN) / Var(mean) %'] = f'{(
             knn_imputed_data_var / mean_imputed_data_var
-        ) * 100
+        ) * 100:.2f}'
 
-        analysis.loc[c, 'KS(orig, KNN) p-val'] = stats.ks_2samp(
+        analysis.loc[c, 'KS(orig, KNN) p-val'] = f'{stats.ks_2samp(
             data[c], knn_imputed_data[c]
-        ).pvalue
+        ).pvalue:.6f}'
 
     plt.clf()
     fig, ax = plt.subplots(figsize=(8, 3))
