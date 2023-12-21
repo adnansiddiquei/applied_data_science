@@ -1,0 +1,34 @@
+%! Author = adnansiddiquei
+%! Date = 20/12/2023
+
+\subsection{Q4 - Baseline Dataset}\label{subsec:q4}
+\subsubsection{Question 4a}\label{subsubsec:q4a}
+    Classification decision trees utilise recursive binary splitting to split the feature-space into high dimensional
+    rectangles in order to predict the outcome class given a feature set.
+    In each iteration, an existing rectangle is split into two new rectangles, by splitting on a feature and a threshold
+    value for that feature.
+    The end tree will have some number of internal nodes $N$, representing splits in the feature space, and $N + 1$
+    terminal nodes which represent the final classification, which would be the modal class in that rectangle.
+    The quality of the split can be measured by a criterion such as the Gini index, and at each split, the feature to
+    split on and the threshold would be chosen by whichever split decreases the Gini index the most.
+    The Gini index is defined as \cite{ISL}:
+    \begin{equation}
+        G = \sum_{k=1}^{K} \hat{p}_{mk}(1 - \hat{p}_{mk})
+        \label{eq:gini-index}
+    \end{equation}
+    where $\hat{p}_{mk}$ is the proportion of training samples in the $m$th region that are from the $k$th class.
+    A region $m$ that contains mainly a single class will have a small Gini index for that region.
+
+    Decision trees suffer from high variance as the trained model is highly dependent on the training data.
+    Bagging and random forests are ensemble methods that reduce the variance of decision trees.
+    With bagging, multiple decision trees are trained on different bootstrapped samples of the training data, and the
+    classification is then decided by a majority vote of the trees.
+    Random forests reduce the variance further by forcing an internal node to split on a random subset of the features,
+    resulting in less correlated trees, and therefore a larger decrease in variance.
+
+\subsubsection{Question 4b}\label{subsubsec:q4b}
+
+
+
+
+
