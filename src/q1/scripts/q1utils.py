@@ -1,7 +1,6 @@
-import matplotlib.table
 import pandas as pd
 from numpy.typing import NDArray
-import matplotlib.pyplot as plt
+from src.utils import format_contingency_table
 from scipy.optimize import linear_sum_assignment
 from sklearn.metrics import pairwise_distances
 from src.utils import load_dataset
@@ -98,57 +97,6 @@ def kmeans_on_dataset_a(n_clusters, random_state):
         tbl[(n_clusters + 1, i)].set_text_props(weight='bold')
 
     return _contingency_table, tbl, kmeans_1_all, kmeans_2_all
-
-
-def format_contingency_table(
-    contingency_table: NDArray,
-    columns: list[str],
-    index: list[str],
-    figsize: tuple[int, int] = (12, 3),
-) -> matplotlib.table.Table:
-    contingency_df = pd.DataFrame(
-        contingency_table,
-        columns=columns,
-        index=index,
-    )
-
-    # Plot table with matplotlib
-    fig, ax = plt.subplots(figsize=(12, 3))  # set size frame
-    ax.axis('off')
-    tbl = pd.plotting.table(
-        ax, contingency_df, loc='center', cellLoc='center', rowLoc='center'
-    )
-
-    # Highlight the cells based on their value with a color map
-    tbl.auto_set_font_size(False)
-    tbl.set_fontsize(12)
-    tbl.scale(1.2, 1.2)
-
-    # Color grade cell from white to blue based on how large the value is
-    for key, cell in tbl.get_celld().items():
-        if key[0] == 0 or key[1] == -1:
-            # Skip the first row (headers) and first column (index)
-            continue
-
-        value = cell.get_text().get_text()
-
-        if value:
-            value = float(value)
-
-            # Scale color based on the max value
-            color = plt.cm.Blues(value / contingency_df.values.max())
-            cell.set_facecolor(color)
-
-            if value > contingency_df.values.max() / 2:
-                # If cell value is large, and the cell is really blue, then make the text white
-                cell.get_text().set_color('white')
-
-    for i in range(len(contingency_df)):
-        # Make the diagonal cells bold and red
-        cell = tbl[(i + 1, i)]
-        cell.set_text_props(weight='bold', color='darkred')
-
-    return tbl
 
 
 def compute_optimal_label_remaps_kmeans(
