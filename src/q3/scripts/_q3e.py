@@ -1,8 +1,12 @@
 import os
-from .q3utils import knn_impute_outliers, identify_most_discriminative_features
 import pandas as pd
 import matplotlib.pyplot as plt
-from src.utils import format_axes, save_fig
+from src.utils import (
+    format_axes,
+    save_fig,
+    knn_impute_outliers,
+    identify_most_discriminative_features,
+)
 
 
 def q3e():

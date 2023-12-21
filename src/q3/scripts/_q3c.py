@@ -1,12 +1,17 @@
 from sklearn.impute import SimpleImputer
-from src.utils import load_dataset, load_dict_from_json, save_fig
+from src.utils import (
+    load_dataset,
+    load_dict_from_json,
+    save_fig,
+    identify_most_discriminative_features,
+    knn_impute_nans,
+)
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 import os
-from .q3utils import identify_most_discriminative_features, knn_impute_nans
 
 
 def q3c():
