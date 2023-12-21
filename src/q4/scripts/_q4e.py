@@ -1,11 +1,9 @@
 import os
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 import numpy as np
 import matplotlib.pyplot as plt
 from src.utils import (
-    format_axes,
     save_fig,
     cross_validate_report,
     format_contingency_table,
@@ -13,7 +11,9 @@ from src.utils import (
 )
 
 
-def plot_gini_importance(feature_importance: pd.DataFrame):
+def plot_gini_importance(
+    feature_importance: pd.DataFrame, most_importance_features: pd.DataFrame
+):
     fig, ax = plt.subplots(figsize=(8, 5))
 
     plt.plot(feature_importance['cumulative_importance'])
@@ -21,13 +21,19 @@ def plot_gini_importance(feature_importance: pd.DataFrame):
     plt.xlabel('Number of Features')
     plt.ylabel('Cumulative Gini Importance')
 
+    num_importance_features = len(most_importance_features)
+
     plt.axhline(y=0.95, color='grey', linestyle='--')
-    plt.axvline(x=319, color='grey', linestyle='--')
+    plt.axvline(x=num_importance_features, color='grey', linestyle='--')
 
-    plt.text(330, 0.01, '319', fontsize=10, color='grey')
+    plt.text(
+        num_importance_features + 12,
+        0.01,
+        f'{num_importance_features}',
+        fontsize=10,
+        color='grey',
+    )
     ax.autoscale(enable=True, tight=True, axis='x')
-
-    format_axes(ax)
 
     save_fig(__file__, 'q4e_gini_importance.png')
 
@@ -36,14 +42,9 @@ def compute_most_important_features(X: np.ndarray, y: np.ndarray):
     X = X.copy()
     y = y.copy()
 
-    # The `stratify=y` gives y_test.value_counts() of {1: 41, 2: 35, 3: 24}
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=3438, stratify=y
-    )
-
     clf = RandomForestClassifier(random_state=3438)
 
-    clf.fit(X_train, y_train)
+    clf.fit(X, y)
 
     feature_importance = (
         pd.DataFrame(clf.feature_importances_)
@@ -80,7 +81,7 @@ def q4e():
     y = classifications.copy().values
 
     feature_importance, most_importance_features = compute_most_important_features(X, y)
-    plot_gini_importance(feature_importance)
+    plot_gini_importance(feature_importance, most_importance_features)
 
     X_subset = data[most_importance_features['feature']].copy().values
 
