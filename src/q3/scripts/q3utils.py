@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.impute import KNNImputer
+from src.utils import identify_outliers
 
 
 def identify_most_discriminative_features(
@@ -82,34 +83,6 @@ def knn_impute_nans(X: pd.DataFrame, discriminative_features, n_neighbors=15):
     ).round(9)
 
     return imputed_data
-
-
-def identify_outliers(X: pd.DataFrame, z_threshold=3.0):
-    """
-    Identify outliers in a DataFrame by computing the z-scores of each value in the DataFrame, and then identifying
-    values that are more than z_threshold standard deviations away from the mean.
-
-    Parameters
-    ----------
-    X
-        2D DataFrame of data
-    z_threshold
-        The threshold for the z-score of a value to be considered an outlier
-
-    Returns
-    -------
-    NDArray
-        A 2D numpy array of booleans indicating whether a value is an outlier. This array has the same shape as X.
-    """
-    X = X.copy()
-    z_scores = StandardScaler().fit_transform(X)
-
-    # A 2d numpy array of booleans indicating whether a value is an outlier
-    outliers = (np.abs(z_scores) > z_threshold) & (
-        np.broadcast_to(X.var(axis=0), z_scores.shape) > 1e-8
-    )
-
-    return outliers
 
 
 def knn_impute_outliers(
