@@ -4,6 +4,14 @@ import os
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import json
+from scipy.stats import norm
+
+
+def compute_confidence_interval(error, confidence_level=0.95):
+    """
+    Computes a confidence interval for a given error. By default, this computes the 95% confidence interval.
+    """
+    return norm.ppf((1 + confidence_level) / 2) * error
 
 
 def save_dict_to_json(dict: dict, script_filepath: str, name: str):
