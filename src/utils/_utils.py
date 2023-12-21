@@ -94,12 +94,17 @@ def load_dict_from_json(script_filepath: str, name: str):
         return json.load(f)
 
 
-def save_fig(script_filepath: str, name: str, **kwargs):
+def create_output_dir_if_required(script_filepath: str):
     cwd = os.path.dirname(os.path.realpath(script_filepath))
 
     if not os.path.exists(os.path.join(cwd, '../outputs')):
         os.makedirs(os.path.join(cwd, '../outputs'))
 
+
+def save_fig(script_filepath: str, name: str, **kwargs):
+    create_output_dir_if_required(script_filepath)
+
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
     plt.savefig(os.path.join(cwd, f'../outputs/{name}'), bbox_inches='tight', **kwargs)
 
 
