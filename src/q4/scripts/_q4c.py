@@ -1,10 +1,13 @@
 import pandas as pd
 import os
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report
 import numpy as np
-from src.utils import format_contingency_table, save_fig, create_table
+from src.utils import (
+    format_contingency_table,
+    save_fig,
+    create_table,
+    cross_validate_report,
+)
 
 
 def q4c():
@@ -18,23 +21,12 @@ def q4c():
     X = data.copy().values
     y = classifications.copy().values
 
-    # The `stratify=y` gives y_test.value_counts() of {1: 41, 2: 35, 3: 24}
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=3438, stratify=y
+    report, cmatrix, test_set_classification_error = cross_validate_report(
+        X, y, RandomForestClassifier(random_state=3438), n_splits=5
     )
 
-    clf = RandomForestClassifier(random_state=3438)
-    clf.fit(X_train, y_train)
-
-    y_pred = clf.predict(X_test)
-
-    # Plot the confusion matrix
-    cmatrix = confusion_matrix(y_test, y_pred, labels=[1, 2, 3])
-    cmatrix = np.column_stack((cmatrix, cmatrix.sum(axis=1)))
-    cmatrix = np.row_stack((cmatrix, cmatrix.sum(axis=0)))
-
     tbl = format_contingency_table(
-        cmatrix,
+        np.round(cmatrix.values, 2),
         columns=['1', '2', '3', 'Total (actual)'],
         index=['1', '2', '3', 'Total (predictions)'],
         figsize=(5, 2),
@@ -45,21 +37,7 @@ def q4c():
 
     save_fig(__file__, 'q4c_confusion_matrix.png')
 
-    # Plot the classification report
-    report = classification_report(y_test, y_pred, output_dict=True)
-    report = pd.DataFrame(report).transpose().round(2)
-    report['support'] = report['support'].astype(int)
-    report = report.drop(index='accuracy')
-
-    report = report.rename(columns={'support': 'true count'})
-
-    def capitalise(strings: list[str]) -> list[str]:
-        return [string.capitalize() for string in strings]
-
-    report.columns = capitalise(report.columns)
-    report.index = capitalise(report.index)
-
-    tbl = create_table(report, figsize=(5, 2))
+    tbl = create_table(report.round(2), figsize=(5, 2))
 
     tbl[4, 3].set_text_props(color='white')
     tbl[5, 3].set_text_props(color='white')

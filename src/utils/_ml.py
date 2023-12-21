@@ -2,6 +2,105 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.metrics import (
+    precision_recall_fscore_support,
+    accuracy_score,
+    confusion_matrix,
+)
+from sklearn.model_selection import StratifiedKFold
+from numpy.typing import NDArray
+
+
+def cross_validate_report(
+    X: NDArray,
+    y: NDArray,
+    model,
+    n_splits: int = 5,
+    random_state: int = 3438,
+):
+    """
+    1 - Take a model, and dataset
+    2 - Use k-fold cross validation to compute the classification report, confusion matrix and test set classification
+           error for each fold. The average of these values is returned.
+    """
+    kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
+
+    accuracy_scores = np.array([])
+
+    precision_scores = np.empty((0, 5))
+    recall_scores = np.empty((0, 5))
+    f1_scores = np.empty((0, 5))
+    support_list = np.empty((0, 3))
+
+    # confusion matrix
+    cmatrix = np.zeros((3, 3))
+
+    for train_index, test_index in kf.split(X, y):
+        X_train, X_test = X[train_index], X[test_index]
+        y_test, y_pred = (
+            y[test_index],
+            model.fit(X_train, y[train_index]).predict(X_test),
+        )
+
+        cmatrix += confusion_matrix(y_test, y_pred, labels=[1, 2, 3], normalize='all')
+
+        precision, recall, f1_score, support = precision_recall_fscore_support(
+            y_test, y_pred, average=None
+        )
+
+        weighted_avg = precision_recall_fscore_support(
+            y_test, y_pred, average='weighted'
+        )[0:3]
+        macro_avg = precision_recall_fscore_support(y_test, y_pred, average='macro')[
+            0:3
+        ]
+
+        accuracy_scores = np.append(accuracy_scores, accuracy_score(y_test, y_pred))
+
+        precision_scores = np.vstack(
+            [
+                precision_scores,
+                np.concatenate([precision, [macro_avg[0]], [weighted_avg[0]]], axis=0),
+            ]
+        )
+
+        recall_scores = np.vstack(
+            [
+                recall_scores,
+                np.concatenate([recall, [macro_avg[1]], [weighted_avg[1]]], axis=0),
+            ]
+        )
+
+        f1_scores = np.vstack(
+            [
+                f1_scores,
+                np.concatenate([f1_score, [macro_avg[2]], [weighted_avg[2]]], axis=0),
+            ]
+        )
+
+        support_list = np.vstack([support_list, support])
+
+    report = pd.DataFrame(
+        {
+            'Precision': precision_scores.mean(axis=0),
+            'Recall': recall_scores.mean(axis=0),
+            'F1-score': f1_scores.mean(axis=0),
+            'True count': np.concatenate(
+                [np.round(support_list.mean(axis=0), 0), [0, 0]]
+            ),
+        },
+        index=['1', '2', '3', 'Macro Avg', 'Weighted Avg'],
+    )
+
+    cmatrix = pd.DataFrame(
+        cmatrix / n_splits, index=['1', '2', '3'], columns=['1', '2', '3']
+    )
+    cmatrix['Total'] = cmatrix.sum(axis=1)
+    cmatrix.loc['Total'] = cmatrix.sum(axis=0)
+
+    test_set_classification_error = 1 - accuracy_scores.mean()
+
+    return report, cmatrix, test_set_classification_error
 
 
 def identify_most_discriminative_features(
