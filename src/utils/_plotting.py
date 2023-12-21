@@ -1,3 +1,4 @@
+import numpy as np
 from numpy.typing import NDArray
 import matplotlib
 import pandas as pd
@@ -39,6 +40,46 @@ def format_axes(ax: Axes, **kwargs):
     ax.tick_params(which='major', length=4, color='k', direction='out')
 
 
+def create_table(
+    data: NDArray | pd.DataFrame,
+    columns: list[str] = None,
+    index: list[str] = None,
+    figsize: tuple[int, int] = (12, 3),
+) -> matplotlib.table.Table:
+    if isinstance(data, np.ndarray):
+        if columns is None:
+            raise ValueError(
+                'If the data is a numpy array, then the columns must be specified'
+            )
+
+        if index is None:
+            raise ValueError(
+                'If the data is a numpy array, then the index must be specified'
+            )
+
+    df = (
+        pd.DataFrame(
+            data,
+            columns=columns,
+            index=index,
+        )
+        if isinstance(data, np.ndarray)
+        else data
+    )
+
+    # Plot table with matplotlib
+    fig, ax = plt.subplots(figsize=figsize)  # set size frame
+    ax.axis('off')
+    tbl = pd.plotting.table(ax, df, loc='center', cellLoc='center', rowLoc='center')
+
+    # Highlight the cells based on their value with a color map
+    tbl.auto_set_font_size(False)
+    tbl.set_fontsize(12)
+    tbl.scale(1.2, 1.2)
+
+    return tbl
+
+
 def format_contingency_table(
     contingency_table: NDArray,
     columns: list[str],
@@ -53,7 +94,7 @@ def format_contingency_table(
     )
 
     # Plot table with matplotlib
-    fig, ax = plt.subplots(figsize=(12, 3))  # set size frame
+    fig, ax = plt.subplots(figsize=figsize)  # set size frame
     ax.axis('off')
     tbl = pd.plotting.table(
         ax, contingency_df, loc='center', cellLoc='center', rowLoc='center'
