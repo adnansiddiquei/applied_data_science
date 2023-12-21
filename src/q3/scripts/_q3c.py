@@ -1,4 +1,4 @@
-from sklearn.impute import KNNImputer, SimpleImputer
+from sklearn.impute import SimpleImputer
 from src.utils import load_dataset, load_dict_from_json, save_fig
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
