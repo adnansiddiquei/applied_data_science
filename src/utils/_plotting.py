@@ -7,6 +7,33 @@ from matplotlib.axes import Axes
 from matplotlib.ticker import AutoMinorLocator
 
 
+def plot_feature_importance(
+    feature_importance: pd.DataFrame, most_importance_features: pd.DataFrame
+):
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    plt.plot(feature_importance['cumulative_importance'])
+
+    plt.xlabel('Number of Features')
+
+    num_importance_features = len(most_importance_features)
+
+    plt.axhline(y=0.95, color='grey', linestyle='--')
+    plt.axvline(x=num_importance_features, color='grey', linestyle='--')
+
+    plt.text(
+        num_importance_features + 12,
+        0.01,
+        f'{num_importance_features}',
+        fontsize=10,
+        color='grey',
+    )
+
+    format_axes(ax)
+
+    ax.autoscale(enable=True, tight=True, axis='x')
+
+
 def format_axes(ax: Axes, **kwargs):
     if ax.get_legend():
         ax.legend(

@@ -8,37 +8,11 @@ from src.utils import (
     cross_validate_report,
     format_contingency_table,
     create_table,
+    plot_feature_importance,
 )
 
 
-def plot_gini_importance(
-    feature_importance: pd.DataFrame, most_importance_features: pd.DataFrame
-):
-    fig, ax = plt.subplots(figsize=(8, 5))
-
-    plt.plot(feature_importance['cumulative_importance'])
-
-    plt.xlabel('Number of Features')
-    plt.ylabel('Cumulative Gini Importance')
-
-    num_importance_features = len(most_importance_features)
-
-    plt.axhline(y=0.95, color='grey', linestyle='--')
-    plt.axvline(x=num_importance_features, color='grey', linestyle='--')
-
-    plt.text(
-        num_importance_features + 12,
-        0.01,
-        f'{num_importance_features}',
-        fontsize=10,
-        color='grey',
-    )
-    ax.autoscale(enable=True, tight=True, axis='x')
-
-    save_fig(__file__, 'q4e_gini_importance.png')
-
-
-def compute_most_important_features(X: np.ndarray, y: np.ndarray):
+def compute_most_important_features_random_forest(X: np.ndarray, y: np.ndarray):
     X = X.copy()
     y = y.copy()
 
@@ -80,8 +54,14 @@ def q4e():
     X = data.copy().values
     y = classifications.copy().values
 
-    feature_importance, most_importance_features = compute_most_important_features(X, y)
-    plot_gini_importance(feature_importance, most_importance_features)
+    (
+        feature_importance,
+        most_importance_features,
+    ) = compute_most_important_features_random_forest(X, y)
+
+    plot_feature_importance(feature_importance, most_importance_features)
+    plt.ylabel('Cumulative Gini Importance')
+    save_fig(__file__, 'q4e_gini_importance.png')
 
     X_subset = data[most_importance_features['feature']].copy().values
 
