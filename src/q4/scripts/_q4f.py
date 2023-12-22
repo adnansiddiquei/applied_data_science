@@ -101,8 +101,7 @@ def plot_feature_importance_with_rolling_overlap(X, y):
     ax2.plot(rolling_overlap, label='Rolling Feature Overlap %', color='darkorange')
     ax2.set_ylabel('Rolling Feature Overlap %')
 
-    format_axes(ax2, ticks_left=False)
-    format_axes(ax, ticks_right=False)
+    format_axes([ax, ax2], combine_legends=True)
 
     crossover = rolling_overlap[len(most_importance_features_logit)]
 
@@ -119,17 +118,6 @@ def plot_feature_importance_with_rolling_overlap(X, y):
     )
 
     ax.autoscale(enable=True, tight=True, axis='x')
-
-    # Collect the legend handles and labels
-    handles, labels = ax.get_legend_handles_labels()
-    handles2, labels2 = ax2.get_legend_handles_labels()
-
-    # Combine the handles and labels
-    handles.extend(handles2)
-    labels.extend(labels2)
-
-    # into  a single legend
-    ax.legend(handles, labels, loc='lower right')
 
     return fig, ax
 

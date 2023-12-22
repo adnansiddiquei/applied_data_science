@@ -1,10 +1,22 @@
 import numpy as np
 import pandas as pd
-import os
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import json
 from scipy.stats import norm
+from multiprocessing import cpu_count
+import os
+
+
+def compute_num_cores_to_utilise():
+    num_cores = cpu_count()
+
+    if num_cores > 8:
+        return 8
+    elif num_cores > 2:
+        return num_cores - 2
+    else:
+        return 1
 
 
 def compute_confidence_interval(error, confidence_level=0.95):
@@ -14,14 +26,14 @@ def compute_confidence_interval(error, confidence_level=0.95):
     return norm.ppf((1 + confidence_level) / 2) * error
 
 
-def save_dict_to_json(dict: dict, script_filepath: str, name: str):
+def save_dict_to_json(data: dict, script_filepath: str, name: str):
     cwd = os.path.dirname(os.path.realpath(script_filepath))
 
     if not os.path.exists(os.path.join(cwd, '../outputs')):
         os.makedirs(os.path.join(cwd, '../outputs'))
 
     with open(os.path.join(cwd, f'../outputs/{name}'), 'w') as f:
-        json.dump(dict, f, indent=4)
+        json.dump(data, f, indent=4)
 
 
 def load_dict_from_json(script_filepath: str, name: str):

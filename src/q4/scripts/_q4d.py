@@ -3,19 +3,13 @@ import numpy as np
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-from multiprocessing import cpu_count, Pool
-from src.utils import compute_confidence_interval, format_axes, save_fig
-
-
-def compute_num_cores_to_utilise():
-    num_cores = cpu_count()
-
-    if num_cores > 8:
-        return 8
-    elif num_cores > 2:
-        return num_cores - 2
-    else:
-        return 1
+from multiprocessing import Pool
+from src.utils import (
+    compute_confidence_interval,
+    format_axes,
+    save_fig,
+    compute_num_cores_to_utilise,
+)
 
 
 def compute_oob_wrt_n_estimators(X, y, random_seed: int) -> list[float]:
