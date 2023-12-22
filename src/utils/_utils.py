@@ -1,11 +1,17 @@
 import numpy as np
-from matplotlib.ticker import AutoMinorLocator
-from matplotlib.axes import Axes
 import pandas as pd
 import os
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import json
+from scipy.stats import norm
+
+
+def compute_confidence_interval(error, confidence_level=0.95):
+    """
+    Computes a confidence interval for a given error. By default, this computes the 95% confidence interval.
+    """
+    return norm.ppf((1 + confidence_level) / 2) * error
 
 
 def save_dict_to_json(dict: dict, script_filepath: str, name: str):
@@ -28,12 +34,17 @@ def load_dict_from_json(script_filepath: str, name: str):
         return json.load(f)
 
 
-def save_fig(script_filepath: str, name: str, **kwargs):
+def create_output_dir_if_required(script_filepath: str):
     cwd = os.path.dirname(os.path.realpath(script_filepath))
 
     if not os.path.exists(os.path.join(cwd, '../outputs')):
         os.makedirs(os.path.join(cwd, '../outputs'))
 
+
+def save_fig(script_filepath: str, name: str, **kwargs):
+    create_output_dir_if_required(script_filepath)
+
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
     plt.savefig(os.path.join(cwd, f'../outputs/{name}'), bbox_inches='tight', **kwargs)
 
 
@@ -64,36 +75,3 @@ def load_dataset(
             )
 
     return data
-
-
-def format_axes(ax: Axes, **kwargs):
-    if ax.get_legend():
-        ax.legend(
-            facecolor='white',
-            loc='best' if 'legend_loc' not in kwargs.keys() else kwargs['legend_loc'],
-        )
-
-    # Make the axes the plots have a white background
-    ax.set_facecolor('white')
-
-    # Format the spines
-    for side in ['top', 'right', 'left', 'bottom']:
-        ax.spines[side].set_visible(True)
-        ax.spines[side].set_edgecolor('k')
-        ax.spines[side].set_linewidth(0.5)
-
-    # Add minor ticks to the axes
-    ax.xaxis.set_minor_locator(AutoMinorLocator())
-    ax.yaxis.set_minor_locator(AutoMinorLocator())
-
-    # Turn on all ticks
-    ax.tick_params(
-        which='both',
-        top=True if 'ticks_top' not in kwargs.keys() else kwargs['ticks_top'],
-        bottom=True if 'ticks_bottom' not in kwargs.keys() else kwargs['ticks_bottom'],
-        left=True if 'ticks_left' not in kwargs.keys() else kwargs['ticks_left'],
-        right=True if 'ticks_right' not in kwargs.keys() else kwargs['ticks_right'],
-    )
-
-    ax.tick_params(which='minor', length=2, color='k', direction='out')
-    ax.tick_params(which='major', length=4, color='k', direction='out')

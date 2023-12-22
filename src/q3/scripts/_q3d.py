@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
-from src.utils import format_axes, save_fig
-from .q3utils import identify_outliers
+from src.utils import format_axes, save_fig, identify_outliers
 import pandas as pd
 
 

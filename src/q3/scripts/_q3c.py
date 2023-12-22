@@ -1,12 +1,11 @@
-from sklearn.impute import KNNImputer, SimpleImputer
-from src.utils import load_dataset, load_dict_from_json, save_fig
+from sklearn.impute import SimpleImputer
+from src.utils import load_dataset, load_dict_from_json, save_fig, AdjustedKNNImputer
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 import os
-from .q3utils import identify_most_discriminative_features, knn_impute_nans
 
 
 def q3c():
@@ -24,15 +23,12 @@ def q3c():
         q3a_results['columns_with_nan'],
     )
 
-    # Also impute the data with a static mean imputation for comparison
-    mean_imputer = SimpleImputer(strategy='mean')
-
-    # Identify the most discriminative features for the KNN imputation, to reduce the dimensionality of the data
-    discriminative_features = list(
-        identify_most_discriminative_features(data.dropna()).index
+    knn_imputed_data = pd.DataFrame(
+        AdjustedKNNImputer(impute_type='nans').fit_transform(data), columns=data.columns
     )
 
-    knn_imputed_data = knn_impute_nans(data, discriminative_features)
+    # Also impute the data with a static mean imputation for comparison
+    mean_imputer = SimpleImputer(strategy='mean')
 
     mean_imputed_data = pd.DataFrame(
         scaler.inverse_transform(mean_imputer.fit_transform(scaled_data)),

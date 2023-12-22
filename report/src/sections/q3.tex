@@ -33,10 +33,8 @@
     feature for each sample.
     An example is the K Nearest Neighbours approach, where a sample missing a feature is imputed with the mean of the
     K nearest neighbours.
-    This can reduce the bias introduced and leave the variance unaffected, but is heavily dependent on the correct
-    choice of model.
-    Additionally, highly dimensional data can often lead to less meaningful nearest neighbours, as distance can become
-    less meaningful with more dimensions \cite{bellman1957}.
+    This can reduce the bias introduced and leave the variance unaffected, but highly dimensional data can often lead
+    to less meaningful nearest neighbours, as distance can become less meaningful with more dimensions \cite{bellman1957}.
 
     Multiple imputation is where the missing data is imputed using a probabilistic model mutliple times, to create
     multiple datasets.
@@ -68,11 +66,10 @@
     (a reduction in MSE).
 
     Fig\eqref{fig:q3c} shows the imputed data, with aforementioned KNN approach.
-    However, first PCA was utilised to calculate the features of the dataset which explained the most variance, and
-    then the KNN imputation was performed using only these 31 most significant features.
-    This was done to reduce the dimensionality of the dataset, to arrive at more meaningful nearest neighbours.
+    However, PCA was performed first to reduce the dimensionality of the dataset, before the nearest neighbours were
+    identified.
     Fig\eqref{fig:q3c_2} shows some summary and comparative statistics of the imputed data, which identifies that
-    imputing the missing data did not signifcantly change the distributions of the features.
+    imputing the missing data did not significantly change the distributions of the features.
 
 \subsubsection{Question 3d and 3e}\label{subsubsec:q3de}
     \begin{figure}[htb]
@@ -96,16 +93,18 @@
     Fig\eqref{fig:q3d_heatmap} shows the outliers in the dataset, which shows that the outliers are fairly uniformly
     distributed across the dataset.
 
-    These outliers were treated as missing values and imputed using same dimensionality reduction and KNN imputation
+    These outliers were treated as missing values and imputed using the same dimensionality reduction and KNN imputation
     approach as utilised in Question 3c for missing values.
-    Fig\eqref{fig:q3e} shows the mean and standard deviation of the 81 most discriminative features before and after
-    imputing the outliers.
-    The variance of the features was reduced after imputation, which was expected, and the reduction in variance in the
-    features with means close to zero was more significant due to outliers affecting the original variance more heavily.
-    The justification behind this is similar as that for Question 3c, the dataset is clustered a distance based
-    approach is therefore the simplest approach, and utilising dimensionality reduction allowed for identification of
+    The justification behind this is similar as that for Question 3c, the dataset is clustered and a distance based
+    approach is therefore likely to be fruitful, and utilising dimensionality reduction allowed for identification of
     meaningful nearest neighbours.
-    All outliers in the original dataset were removed with a single iteration, however, as expected, this altered the
-    distribution of the data, and gave rise to new outliers.
-    No further iterations were performed in order to preserve the statistical significance of the dataset, many iterations
-    could risk losing substantial variance, and risk introducing bias.
+    Outliers were removed iteratively, with the dataset being re-standardised and outliers being re-computed after each
+    iteration.
+    The algorithm iterated 8 times, until only 0.27\% of the data lay outside of $3\sigma$, which is the expected
+    proportion of data outside of $3\sigma$ for a normal distribution.
+
+    Fig\eqref{fig:q3e} shows the mean and standard deviation of the 81 most discriminative features (identified from
+    the PCA loadings) before and after imputing the outliers.
+    The variance of the features were reduced after imputation, which was expected, and the reduction in variance in the
+    features with means close to zero was more significant as these features were more sparse and therefore more
+    likely to have outliers.

@@ -1,8 +1,12 @@
 import os
-from .q3utils import knn_impute_outliers, identify_most_discriminative_features
 import pandas as pd
 import matplotlib.pyplot as plt
-from src.utils import format_axes, save_fig
+from src.utils import (
+    format_axes,
+    save_fig,
+    identify_most_discriminative_features,
+    AdjustedKNNImputer,
+)
 
 
 def q3e():
@@ -14,8 +18,12 @@ def q3e():
 
     data, classifications = data[data.columns[:-1]], data['classification']
 
-    # There are a total of 2904 outliers, we impute them using KNNImputer and the 38 most discriminative features
-    processed_data, new_outliers = knn_impute_outliers(data)
+    # There are a total of 2904 outliers
+    processed_data = AdjustedKNNImputer(
+        n_neighbors=15, n_components=2, z_score_threshold=3
+    ).fit_transform(data)
+
+    processed_data = pd.DataFrame(processed_data, columns=data.columns)
 
     # Save the processed data
     processed_data.round(9).to_csv(
