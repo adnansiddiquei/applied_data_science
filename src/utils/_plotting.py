@@ -39,7 +39,29 @@ def plot_feature_importance(
     return fig, ax
 
 
-def format_axes(ax: Axes, **kwargs):
+def format_axes(ax: Axes | list[Axes], **kwargs):
+    # This handles if two axes are passed in, there is some default styling always done to these
+    if isinstance(ax, list) and len(ax) == 2:
+        format_axes(
+            ax[0], ticks_right=False, **(kwargs[0] if 0 in kwargs.keys() else {})
+        )
+        format_axes(
+            ax[1], ticks_left=False, **(kwargs[1] if 1 in kwargs.keys() else {})
+        )
+
+        if 'combine_legends' in kwargs.keys() and kwargs['combine_legends'] is True:
+            handles, labels = ax[0].get_legend_handles_labels()
+            handles2, labels2 = ax[1].get_legend_handles_labels()
+
+            # Combine the handles and labels
+            handles.extend(handles2)
+            labels.extend(labels2)
+
+            # into  a single legend
+            ax[0].legend(handles, labels)
+
+        return
+
     if ax.get_legend():
         ax.legend(
             facecolor='white',
@@ -70,6 +92,9 @@ def format_axes(ax: Axes, **kwargs):
 
     ax.tick_params(which='minor', length=2, color='k', direction='out')
     ax.tick_params(which='major', length=4, color='k', direction='out')
+
+    if 'autoscale_x' in kwargs.keys() and kwargs['autoscale_x'] is True:
+        ax.autoscale(enable=True, tight=True, axis='x')
 
 
 def create_table(
