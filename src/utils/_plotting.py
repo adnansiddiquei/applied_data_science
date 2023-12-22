@@ -8,11 +8,14 @@ from matplotlib.ticker import AutoMinorLocator
 
 
 def plot_feature_importance(
-    feature_importance: pd.DataFrame, most_importance_features: pd.DataFrame
+    feature_importance: pd.DataFrame, most_importance_features: pd.DataFrame, **kwargs
 ):
     fig, ax = plt.subplots(figsize=(8, 5))
 
-    plt.plot(feature_importance['cumulative_importance'])
+    plt.plot(
+        feature_importance['cumulative_importance'],
+        label='Feature Importance' if 'label' not in kwargs.keys() else kwargs['label'],
+    )
 
     plt.xlabel('Number of Features')
 
@@ -25,13 +28,15 @@ def plot_feature_importance(
         num_importance_features + 12,
         0.01,
         f'{num_importance_features}',
-        fontsize=10,
+        fontsize=12,
         color='grey',
     )
 
     format_axes(ax)
 
     ax.autoscale(enable=True, tight=True, axis='x')
+
+    return fig, ax
 
 
 def format_axes(ax: Axes, **kwargs):

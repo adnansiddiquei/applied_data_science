@@ -9,9 +9,11 @@ from src.utils import (
     create_table,
     save_fig,
     plot_feature_importance,
+    format_axes,
 )
 import numpy as np
 import matplotlib.pyplot as plt
+from ._q4e import compute_most_important_features_random_forest
 
 
 def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):
@@ -57,6 +59,79 @@ def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):
     ]
 
     return feature_importance, most_importance_features
+
+
+def plot_feature_importance_with_rolling_overlap(X, y):
+    X = X.copy()
+    y = y.copy()
+
+    (
+        feature_importance_logit,
+        most_importance_features_logit,
+    ) = compute_most_important_features_logit(X, y)
+    (
+        feature_importance_rf,
+        most_importance_features_rf,
+    ) = compute_most_important_features_random_forest(X, y)
+
+    def compute_overlap(fi1, fi2):
+        num_features = len(fi1)
+        overlap_rolling_pct = np.zeros(num_features - 1)
+
+        for i in range(num_features - 1):
+            features_in_fi1 = fi1.iloc[: i + 1]['feature'].values
+            features_in_fi2 = fi2.iloc[: i + 1]['feature'].values
+
+            overlap_count = np.intersect1d(features_in_fi1, features_in_fi2)
+
+            overlap_rolling_pct[i] = len(overlap_count) / (i + 1)
+
+        return overlap_rolling_pct
+
+    rolling_overlap = (
+        compute_overlap(feature_importance_logit, feature_importance_rf) * 100
+    )
+
+    fig, ax = plot_feature_importance(
+        feature_importance_logit, most_importance_features_logit, label='MSLI'
+    )
+    plt.ylabel('Cum. Norm. Mean Squared Logit Importance (NMSLI)')
+
+    ax2 = ax.twinx()
+    ax2.plot(rolling_overlap, label='Rolling Feature Overlap %', color='darkorange')
+    ax2.set_ylabel('Rolling Feature Overlap %')
+
+    format_axes(ax2, ticks_left=False)
+    format_axes(ax, ticks_right=False)
+
+    crossover = rolling_overlap[len(most_importance_features_logit)]
+
+    plt.axhline(crossover, color='grey', linestyle='--')
+
+    plt.text(
+        980,
+        crossover - 2,
+        f'{crossover:.1f}%',
+        ha='right',
+        va='top',
+        fontsize=12,
+        color='grey',
+    )
+
+    ax.autoscale(enable=True, tight=True, axis='x')
+
+    # Collect the legend handles and labels
+    handles, labels = ax.get_legend_handles_labels()
+    handles2, labels2 = ax2.get_legend_handles_labels()
+
+    # Combine the handles and labels
+    handles.extend(handles2)
+    labels.extend(labels2)
+
+    # into  a single legend
+    ax.legend(handles, labels, loc='lower right')
+
+    return fig, ax
 
 
 def q4f():
@@ -105,14 +180,13 @@ def q4f():
 
     save_fig(__file__, 'q4f_classification_report_all_feats.png')
 
-    # Now compute the most important features]
+    # Now compute the most important features
     (
         feature_importance,
         most_importance_features,
     ) = compute_most_important_features_logit(X, y)
 
-    plot_feature_importance(feature_importance, most_importance_features)
-    plt.ylabel('Cum. Mean Squared Logit Importance (MSLI)')
+    fig, ax = plot_feature_importance_with_rolling_overlap(X, y)
     save_fig(__file__, 'q4f_logit_importance.png')
 
     X_subset = data[most_importance_features['feature']].copy().values
