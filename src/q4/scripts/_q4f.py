@@ -10,55 +10,11 @@ from src.utils import (
     save_fig,
     plot_feature_importance,
     format_axes,
+    compute_most_important_features_logit,
 )
 import numpy as np
 import matplotlib.pyplot as plt
 from ._q4e import compute_most_important_features_random_forest
-
-
-def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):
-    X = X.copy()
-    y = y.copy()
-
-    pipeline = Pipeline(
-        [
-            ('scaler', StandardScaler()),
-            (
-                'logistic_regression',
-                LogisticRegression(multi_class='multinomial', random_state=3438),
-            ),
-        ]
-    )
-
-    pipeline.fit(X, y)
-
-    feature_importance = (
-        pd.DataFrame(pipeline['logistic_regression'].coef_.T ** 2)
-        .mean(axis=1)
-        .reset_index()
-        .sort_values(0, ascending=False)
-        .reset_index(drop=True)
-        .rename(columns={'index': 'feature', 0: 'importance'})
-    )
-
-    # Normalise the feature importance
-    feature_importance['importance'] = (
-        feature_importance['importance'] / feature_importance['importance'].sum()
-    )
-
-    feature_importance['feature'] = [
-        f'Fea{feature + 1}' for feature in feature_importance['feature']
-    ]
-
-    feature_importance['cumulative_importance'] = feature_importance[
-        'importance'
-    ].cumsum()
-
-    most_importance_features = feature_importance[
-        feature_importance['cumulative_importance'].round(4) <= 0.95
-    ]
-
-    return feature_importance, most_importance_features
 
 
 def plot_feature_importance_with_rolling_overlap(X, y):
