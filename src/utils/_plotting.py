@@ -102,7 +102,8 @@ def create_table(
     data: NDArray | pd.DataFrame,
     columns: list[str] = None,
     index: list[str] = None,
-    figsize: tuple[int, int] = (12, 3),
+    figsize: tuple[float, float] = (12, 3),
+    **kwargs,
 ) -> matplotlib.table.Table:
     if isinstance(data, np.ndarray):
         if columns is None:
@@ -132,8 +133,10 @@ def create_table(
 
     # Highlight the cells based on their value with a color map
     tbl.auto_set_font_size(False)
-    tbl.set_fontsize(12)
-    tbl.scale(1.2, 1.2)
+    tbl.set_fontsize(12 if 'fontsize' not in kwargs.keys() else kwargs['fontsize'])
+    tbl.scale(1.2, 1.2) if 'scale' not in kwargs.keys() else tbl.scale(
+        kwargs['scale'][0], kwargs['scale'][1]
+    )
 
     return tbl
 
@@ -142,8 +145,9 @@ def format_contingency_table(
     contingency_table: NDArray,
     columns: list[str],
     index: list[str],
-    figsize: tuple[int, int] = (12, 3),
+    figsize: tuple[float, float] = (12, 3),
     diagonal_color: str = 'darkred',
+    **kwargs,
 ) -> matplotlib.table.Table:
     contingency_df = pd.DataFrame(
         contingency_table,
@@ -160,8 +164,10 @@ def format_contingency_table(
 
     # Highlight the cells based on their value with a color map
     tbl.auto_set_font_size(False)
-    tbl.set_fontsize(12)
-    tbl.scale(1.2, 1.2)
+    tbl.set_fontsize(12 if 'fontsize' not in kwargs.keys() else kwargs['fontsize'])
+    tbl.scale(1.2, 1.2) if 'scale' not in kwargs.keys() else tbl.scale(
+        kwargs['scale'][0], kwargs['scale'][1]
+    )
 
     # Color grade cell from white to blue based on how large the value is
     for key, cell in tbl.get_celld().items():

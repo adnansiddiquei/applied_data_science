@@ -30,4 +30,113 @@
     maximum number of internal nodes per tree, and the latter is the number of features to consider when splitting.
     Heuristically, \inlinecode{max_depth} is typically set to $\sqrt{N}$ where $N$ is the number of features.
 
-\subsubsection{Question 4b}\label{subsubsec:q4b}
+\subsubsection{Question 4b, 4c, 4d and 4e}\label{subsubsec:q4bcde}
+    The dataset was pre-processed using the same outlier removal technique as in Section \ref{subsubsec:q3de}, and then
+    standardised.
+    No duplicates or missing values were found.
+    The dataset contained imbalanced classes, as such, stratified sampling was used for train-test splitting.
+
+    \begin{figure}[htb]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4c_confusion_matrix}
+        \caption{Mean confusion matrix.}
+        \label{fig:q4c_confusion_matrix}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4c_classification_report}
+        \caption{Mean classification report.}
+        \label{fig:q4c_classification_report}
+    \end{subfigure}
+    \caption{Confusion matrix and classification report averaged over 5-folds of cross validation for the random forest
+        classifier on \inlinecode{ADS_baselineDataset.csv}. The leading diagonal of the confusion matrix indicates a
+        mean 10.0\% test set classification error.
+        The confusion matrix cells are shown as percentages of the total number of samples in the test set.
+        The train test split was 0.8/0.2, giving a test set size of 100.}
+    \label{fig:q4c}
+    \end{figure}
+
+    The dataset was then classified using \inlinecode{RandomForestClassifier} and Fig.\eqref{fig:q4c} shows a summary
+    of the model performance, averaged over 5-folds of cross validation.
+    This gave a test set classification error of 11\%.
+
+    \begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/q4d}
+    \caption{The out of bag error rate for a \inlinecode{RandomForestClassifier} on the pre-processed dataset
+        \inlinecode{ADS_baselineDataset.csv}. The OOB error rate was computed 20 times at each value of
+        \inlinecode{n_estimators} to give error bars.}
+        \label{fig:q4d}
+    \end{figure}
+
+    \begin{figure}[htb]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4d_confusion_matrix_200_trees}
+        \caption{Mean confusion matrix.}
+        \label{fig:q4d_confusion_matrix_200_trees}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4d_classification_report_200_trees}
+        \caption{Mean classification report.}
+        \label{fig:q4d_classification_report_200_trees}
+    \end{subfigure}
+    \caption{The results shown in Fig. \eqref{fig:q4c} but with 200 trees. The mean test set classification error was
+        8.6\%.}
+    \label{fig:q4d_200_trees}
+    \end{figure}
+
+    The \inlinecode{RandomForestClassifier} was then optimised using the out-of-bag (OOB) error rate, the results of this
+    is shown in Fig. \eqref{fig:q4d} where it was found that after 200 trees, the OOB error rate did not decrease by
+    any significant amount.
+    Fig. \eqref{fig:q4d_200_trees} shows the summary of the model performance with 200 trees.
+    The test set classification error marginally improved to 9\% and the average precision, recall and F1-scores also
+    marginally improved.
+    These results are in line with Fig. \eqref{fig:q4d} which shoes a noticeable but not significant decrease in the
+    OOB error rate from 100 to 200 trees.
+
+    \begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/q4e_gini_importance}
+    \caption{The ordered (highest first), cumulative Gini importance of the features in
+        \inlinecode{ADS_baselineDataset.csv}. The horizontal grey line is the 95\% threshold, which contains the top
+        322 features.}
+        \label{fig:q4e_gini_importance}
+    \end{figure}
+
+    \begin{figure}[htb]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4e_confusion_matrix}
+        \caption{Average confusion matrix.}
+        \label{fig:q4e_confusion_matrix}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4e_classification_report}
+        \caption{Average classification report.}
+        \label{fig:q4e_classification_report}
+    \end{subfigure}
+    \caption{The results shown in Fig. \eqref{fig:q4c} and Fig. \eqref{fig:q4d_200_trees} but with 200 trees and
+        utilising only the top 322 features. The mean test set classification error was 7.8\%.}
+    \label{fig:q4e}
+    \end{figure}
+
+    The feature importance was then computed using the Gini importance given within
+    \inlinecode{RandomForestClassifier.feature_importances_} as shown in Fig. \eqref{fig:q4e_gini_importance}.
+    The Gini importance of a feature is defined as the total (normalised) decrease in the Gini index as a result of all
+    internal splits within trees that split on a given feature, so a feature is more important if it is used in many
+    splits, and if these splits consequently result in a large decrease in the Gini index.
+    The top 322 features containing 95\% of the cumulative Gini importance were then selected to redo the classification,
+    and the results are shown in Fig.\eqref{fig:q4e}.
+    Fig.\eqref{fig:q4e}, when compared to Fig.\eqref{fig:q4d_200_trees}, shows that equivalent (or marginally better)
+    performance is achievable by only using the subset of most important features.
+
+\subsubsection{Question 4f}\label{subsubsec:qf}
+    Everything in the previous section, Sec.\eqref{subsubsec:q4bcde}, was then repeated for a multinomial logistic
+    regression classifier: \inlinecode{LogisticRegression}.

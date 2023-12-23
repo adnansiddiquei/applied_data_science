@@ -37,14 +37,16 @@ def q4e():
     X_subset = data[most_importance_features['feature']].copy().values
 
     report, cmatrix, test_set_classification_error = cross_validate_report(
-        X_subset, y, RandomForestClassifier(random_state=3438, n_estimators=200)
+        X_subset, y, RandomForestClassifier(random_state=545, n_estimators=200)
     )
 
     tbl = format_contingency_table(
-        np.round(cmatrix.values, 2),
-        columns=['1', '2', '3', 'Total (actual)'],
-        index=['1', '2', '3', 'Total (predictions)'],
-        figsize=(5, 2),
+        np.round(cmatrix.values, 3),
+        columns=['1', '2', '3', 'Tot. (actual)'],
+        index=['1', '2', '3', 'Tot. (predictions)'],
+        figsize=(4.5, 2),
+        fontsize=16,
+        scale=(1.6, 2),
     )
 
     tbl[4, 3].set_facecolor('white')
@@ -52,7 +54,7 @@ def q4e():
 
     save_fig(__file__, 'q4e_confusion_matrix.png')
 
-    tbl = create_table(report.round(2), figsize=(5, 2))
+    tbl = create_table(report.round(3), figsize=(4.5, 2), fontsize=16, scale=(1.6, 2))
 
     tbl[4, 3].set_text_props(color='white')
     tbl[5, 3].set_text_props(color='white')
