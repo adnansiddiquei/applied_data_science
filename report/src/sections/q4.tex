@@ -113,13 +113,13 @@
     \begin{subfigure}{0.5\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{./figures/q4e_confusion_matrix}
-        \caption{Average confusion matrix.}
+        \caption{Mean confusion matrix.}
         \label{fig:q4e_confusion_matrix}
     \end{subfigure}%
     \begin{subfigure}{0.5\textwidth}
         \centering
         \includegraphics[width=0.9\textwidth]{./figures/q4e_classification_report}
-        \caption{Average classification report.}
+        \caption{Mean classification report.}
         \label{fig:q4e_classification_report}
     \end{subfigure}
     \caption{The results shown in Fig. \eqref{fig:q4c} and Fig. \eqref{fig:q4d_200_trees} but with 200 trees and
@@ -138,5 +138,69 @@
     performance is achievable by only using the subset of most important features.
 
 \subsubsection{Question 4f}\label{subsubsec:qf}
+    \begin{figure}[htb]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4f_confusion_matrix_all_feats}
+        \caption{Mean confusion matrix.}
+        \label{fig:q4f_confusion_matrix_all_feats}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4f_classification_report_all_feats}
+        \caption{Mean classification report.}
+        \label{fig:q4f_classification_report_all_feats}
+    \end{subfigure}
+    \caption{Confusion matrix and classification report averaged over 5-folds of cross validation for the
+        \inlinecode{LogisticRegression} classifier on \inlinecode{ADS_baselineDataset.csv}.
+        The leading diagonal of the confusion matrix indicates a mean 12.8\% test set classification error.
+        The confusion matrix cells are shown as percentages of the total number of samples in the test set.
+        The train test split was 0.8/0.2, giving a test set size of 100.}
+    \label{fig:q4f_all_feats}
+    \end{figure}
+
+    \begin{figure}[htb]
+    \centering
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4f_confusion_matrix_reduced_feats}
+        \caption{Mean confusion matrix.}
+        \label{fig:q4f_confusion_matrix_reduced_feats}
+    \end{subfigure}%
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]{./figures/q4f_classification_report_reduced_feats}
+        \caption{Mean classification report.}
+        \label{fig:q4f_classification_report_reduced_feats}
+    \end{subfigure}
+    \caption{The results shown in Fig. \eqref{fig:q4f_all_feats} but with only the top 382 features.
+        The mean test set classification error was 7.6\%.}
+    \label{fig:q4f_reduced_feats}
+    \end{figure}
+
+    \begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.9\textwidth]{./figures/q4f_logit_importance}
+    \caption{The ordered (highest first), cumulative NMSLI of the features in the \inlinecode{LogisticRegression} model.
+        The horizontal grey line is the 95\% threshold, which contains the top 382 features. Amongst the 382 top features
+        indicated by the NMSLI, 72.8\% of them were also in the top 382 features for the \inlinecode{RandomForestClassifier}
+        indicated by the Gini importance, this is what the rolling feature overlap indicates.}
+        \label{fig:q4f_logit_importance}
+    \end{figure}
+
     Everything in the previous section, Sec.\eqref{subsubsec:q4bcde}, was then repeated for a multinomial logistic
     regression classifier: \inlinecode{LogisticRegression}.
+    Fig.\eqref{fig:q4f_all_feats} shows the results of the classification using all features, and
+    Fig.\eqref{fig:q4f_reduced_feats} shows the results of the classification using only the top 382 features, which
+    shows a significant increase in performance in terms of test set classification error and average precision, recall
+    and F1-scores.
+    The feature importance was computed using a novel metric, the normalised mean squared logit importance (NMSLI).
+    This was computed by averaging the squared coefficients across all 3 classes for each feature (by accessing
+    \inlinecode{LogisticRegression.coef_}) and then normalising them.
+    This provided a feature-wise metric for importance, akin to the Gini importance, which took into account the
+    magnitude and consistency of the coefficients across all classes.
+    This was then treated the same as the Gini importance, giving the top 382 features which contributed to 95\% of the
+    cumulative NMSLI, as shown in Fig.\eqref{fig:q4f_logit_importance}.
+    Comparing Fig.\eqref{fig:q4e} and Fig.\eqref{fig:q4f_reduced_feats}, both models performed very similarly across
+    all metrics.

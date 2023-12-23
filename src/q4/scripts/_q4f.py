@@ -97,10 +97,12 @@ def q4f():
     )
 
     tbl = format_contingency_table(
-        np.round(cmatrix.values, 2),
-        columns=['1', '2', '3', 'Total (actual)'],
-        index=['1', '2', '3', 'Total (predictions)'],
-        figsize=(5, 2),
+        np.round(cmatrix.values, 3),
+        columns=['1', '2', '3', 'Tot. (actual)'],
+        index=['1', '2', '3', 'Tot. (predictions)'],
+        figsize=(4.5, 2),
+        fontsize=16,
+        scale=(1.6, 2),
     )
 
     tbl[4, 3].set_facecolor('white')
@@ -108,7 +110,7 @@ def q4f():
 
     save_fig(__file__, 'q4f_confusion_matrix_all_feats.png')
 
-    tbl = create_table(report.round(2), figsize=(5, 2))
+    tbl = create_table(report.round(3), figsize=(4.5, 2), fontsize=16, scale=(1.6, 2))
 
     tbl[4, 3].set_text_props(color='white')
     tbl[5, 3].set_text_props(color='white')
@@ -131,10 +133,12 @@ def q4f():
     )
 
     tbl = format_contingency_table(
-        np.round(cmatrix.values, 2),
-        columns=['1', '2', '3', 'Total (actual)'],
-        index=['1', '2', '3', 'Total (predictions)'],
-        figsize=(5, 2),
+        np.round(cmatrix.values, 3),
+        columns=['1', '2', '3', 'Tot. (actual)'],
+        index=['1', '2', '3', 'Tot. (predictions)'],
+        figsize=(4.5, 2),
+        fontsize=16,
+        scale=(1.6, 2),
     )
 
     tbl[4, 3].set_facecolor('white')
@@ -142,7 +146,7 @@ def q4f():
 
     save_fig(__file__, 'q4f_confusion_matrix_reduced_feats.png')
 
-    tbl = create_table(report.round(2), figsize=(5, 2))
+    tbl = create_table(report.round(3), figsize=(4.5, 2), fontsize=16, scale=(1.6, 2))
 
     tbl[4, 3].set_text_props(color='white')
     tbl[5, 3].set_text_props(color='white')
