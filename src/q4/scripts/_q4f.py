@@ -11,6 +11,7 @@ from src.utils import (
     plot_feature_importance,
     format_axes,
     compute_most_important_features_logit,
+    compute_rolling_intersection_pct,
 )
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,26 +31,16 @@ def plot_feature_importance_with_rolling_overlap(X, y):
         most_importance_features_rf,
     ) = compute_most_important_features_random_forest(X, y)
 
-    def compute_overlap(fi1, fi2):
-        num_features = len(fi1)
-        overlap_rolling_pct = np.zeros(num_features - 1)
-
-        for i in range(num_features - 1):
-            features_in_fi1 = fi1.iloc[: i + 1]['feature'].values
-            features_in_fi2 = fi2.iloc[: i + 1]['feature'].values
-
-            overlap_count = np.intersect1d(features_in_fi1, features_in_fi2)
-
-            overlap_rolling_pct[i] = len(overlap_count) / (i + 1)
-
-        return overlap_rolling_pct
-
     rolling_overlap = (
-        compute_overlap(feature_importance_logit, feature_importance_rf) * 100
+        compute_rolling_intersection_pct(
+            feature_importance_logit['feature'].values,
+            feature_importance_rf['feature'].values,
+        )
+        * 100
     )
 
     fig, ax = plot_feature_importance(
-        feature_importance_logit, most_importance_features_logit, label='MSLI'
+        feature_importance_logit, most_importance_features_logit, label='NMSLI'
     )
     plt.ylabel('Cum. Norm. Mean Squared Logit Importance (NMSLI)')
 

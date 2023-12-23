@@ -21,16 +21,17 @@ def plot_feature_importance(
 
     num_importance_features = len(most_importance_features)
 
-    plt.axhline(y=0.95, color='grey', linestyle='--')
-    plt.axvline(x=num_importance_features, color='grey', linestyle='--')
+    if 'draw_intersection' not in kwargs.keys() or kwargs['draw_intersection'] is True:
+        plt.axhline(y=0.95, color='grey', linestyle='--')
+        plt.axvline(x=num_importance_features, color='grey', linestyle='--')
 
-    plt.text(
-        num_importance_features + 12,
-        0.01,
-        f'{num_importance_features}',
-        fontsize=12,
-        color='grey',
-    )
+        plt.text(
+            num_importance_features + 12,
+            0.01,
+            f'{num_importance_features}',
+            fontsize=12,
+            color='grey',
+        )
 
     format_axes(ax)
 

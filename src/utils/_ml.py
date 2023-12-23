@@ -6,12 +6,39 @@ from sklearn.metrics import (
     precision_recall_fscore_support,
     accuracy_score,
     confusion_matrix,
+    pairwise_distances,
 )
 from sklearn.model_selection import StratifiedKFold
 from numpy.typing import NDArray
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from scipy.optimize import linear_sum_assignment
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+
+
+def predict_and_relabel(X, gmm: GaussianMixture, kmeans: KMeans):
+    """
+    Predict the cluster labels for X using the GMM and KMeans models, and relabel the clusters so that the
+    cluster labels indicate the same cluster for each model. This is done by solving the linear sum assignment
+    problem.
+
+    Using this, we can actually compute a meaningful confusion matrix.
+    """
+    y_pred_gmm = gmm.fit_predict(X)
+    y_pred_kmeans = kmeans.fit_predict(X)
+
+    distances = pairwise_distances(gmm.means_, kmeans.cluster_centers_)
+    row_ind, col_ind = linear_sum_assignment(distances)
+
+    y_pred_kmeans = (
+        pd.Series(y_pred_kmeans)
+        .replace({col_ind[i]: row_ind[i] for i in range(len(row_ind))})
+        .values
+    )
+
+    return y_pred_gmm, y_pred_kmeans
 
 
 def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):

@@ -2,9 +2,8 @@ from multiprocessing import Pool
 from typing import Literal
 import numpy as np
 import pandas as pd
-from scipy.optimize import linear_sum_assignment
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import silhouette_score, pairwise_distances, confusion_matrix
+from sklearn.metrics import silhouette_score, confusion_matrix
 from sklearn.mixture import GaussianMixture
 from sklearn.cluster import KMeans
 import os
@@ -15,6 +14,7 @@ from src.utils import (
     compute_num_cores_to_utilise,
     format_contingency_table,
     save_dict_to_json,
+    predict_and_relabel,
 )
 
 
@@ -130,22 +130,6 @@ def compute_silhouette_score(
     )
 
 
-def predict_and_relabel(X, gmm: GaussianMixture, kmeans: KMeans):
-    y_pred_gmm = gmm.fit_predict(X)
-    y_pred_kmeans = kmeans.fit_predict(X)
-
-    distances = pairwise_distances(gmm.means_, kmeans.cluster_centers_)
-    row_ind, col_ind = linear_sum_assignment(distances)
-
-    y_pred_kmeans = (
-        pd.Series(y_pred_kmeans)
-        .replace({col_ind[i]: row_ind[i] for i in range(len(row_ind))})
-        .values
-    )
-
-    return y_pred_gmm, y_pred_kmeans
-
-
 def q5a():
     # Load the data
     cwd = os.path.dirname(os.path.realpath(__file__))
@@ -255,7 +239,7 @@ def q5a():
         figsize=(3, 3),
     )
 
-    tbl.scale(1.0, 1.2)
+    tbl.scale(1.2, 1.2)
 
     tbl[(3, 2)].set_facecolor('white')
     tbl[(3, 2)].set_text_props(color='black')
