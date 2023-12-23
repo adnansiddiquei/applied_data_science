@@ -4,11 +4,15 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
+
 from src.utils import (
     compute_confidence_interval,
     format_axes,
     save_fig,
     compute_num_cores_to_utilise,
+    cross_validate_report,
+    format_contingency_table,
+    create_table,
 )
 
 
@@ -61,8 +65,31 @@ def q4d():
     plt.axhline(y=means[idx], color='gray', linestyle='--')
     plt.axvline(x=n_estimators[idx], color='gray', linestyle='--')
 
-    plt.xlabel('Number of trees')
+    plt.xlabel(r'Number of trees $n\_estimators$')
     plt.ylabel('OOB error rate')
 
     format_axes(ax)
     save_fig(__file__, 'q4d.png')
+
+    report, cmatrix, test_set_classification_error = cross_validate_report(
+        X, y, RandomForestClassifier(random_state=3438, n_estimators=200)
+    )
+
+    tbl = format_contingency_table(
+        np.round(cmatrix.values, 2),
+        columns=['1', '2', '3', 'Total (actual)'],
+        index=['1', '2', '3', 'Total (predictions)'],
+        figsize=(5, 2),
+    )
+
+    tbl[4, 3].set_facecolor('white')
+    tbl[4, 3].set_text_props(color='white')
+
+    save_fig(__file__, 'q4d_confusion_matrix_200_trees.png')
+
+    tbl = create_table(report.round(2), figsize=(5, 2))
+
+    tbl[4, 3].set_text_props(color='white')
+    tbl[5, 3].set_text_props(color='white')
+
+    save_fig(__file__, 'q4d_classification_report_200_trees.png')

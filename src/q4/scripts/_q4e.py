@@ -37,7 +37,7 @@ def q4e():
     X_subset = data[most_importance_features['feature']].copy().values
 
     report, cmatrix, test_set_classification_error = cross_validate_report(
-        X_subset, y, RandomForestClassifier(random_state=3438)
+        X_subset, y, RandomForestClassifier(random_state=3438, n_estimators=200)
     )
 
     tbl = format_contingency_table(
