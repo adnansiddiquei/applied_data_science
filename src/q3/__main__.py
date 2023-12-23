@@ -1,8 +1,4 @@
-from .scripts import q3a, q3c, q3c_optimise_knn_imputer, q3d, q3e
+from .scripts import q3_run_all
 
 if __name__ == '__main__':
-    q3a()
-    q3c()
-    q3c_optimise_knn_imputer()
-    q3d()
-    q3e()
+    q3_run_all()

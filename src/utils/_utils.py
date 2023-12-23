@@ -50,6 +50,8 @@ def save_dataframe_to_csv(df: pd.DataFrame, script_filepath: str, name: str, **k
     create_output_dir_if_required(script_filepath)
     df.to_csv(os.path.join(cwd, f'../outputs/{name}'), **kwargs)
 
+    print_save_message(script_filepath, name)
+
 
 def load_dataframe_from_csv(script_filepath: str, name: str, **kwargs):
     cwd = os.path.dirname(os.path.realpath(script_filepath))
@@ -63,6 +65,8 @@ def save_dict_to_json(data: dict, script_filepath: str, name: str):
 
     with open(os.path.join(cwd, f'../outputs/{name}'), 'w') as f:
         json.dump(data, f, indent=4)
+
+    print_save_message(script_filepath, name)
 
 
 def load_dict_from_json(script_filepath: str, name: str):
@@ -84,6 +88,15 @@ def save_fig(script_filepath: str, name: str, **kwargs):
 
     cwd = os.path.dirname(os.path.realpath(script_filepath))
     plt.savefig(os.path.join(cwd, f'../outputs/{name}'), bbox_inches='tight', **kwargs)
+
+    print_save_message(script_filepath, name)
+
+
+def print_save_message(script_filepath: str, name: str):
+    cwd = os.path.dirname(os.path.realpath(script_filepath))
+    cwd = cwd.split('as3438')[-1].split('scripts')[0]
+
+    print(f'Output saved: {cwd}outputs/{name}')
 
 
 def load_dataset(
