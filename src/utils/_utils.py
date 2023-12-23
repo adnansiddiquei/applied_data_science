@@ -51,9 +51,7 @@ def save_dataframe_to_csv(df: pd.DataFrame, script_filepath: str, name: str, **k
     df.to_csv(os.path.join(cwd, f'../outputs/{name}'), **kwargs)
 
 
-def load_dataframe_from_csv(
-    df: pd.DataFrame, script_filepath: str, name: str, **kwargs
-):
+def load_dataframe_from_csv(script_filepath: str, name: str, **kwargs):
     cwd = os.path.dirname(os.path.realpath(script_filepath))
     return pd.read_csv(os.path.join(cwd, f'../outputs/{name}'), **kwargs)
 

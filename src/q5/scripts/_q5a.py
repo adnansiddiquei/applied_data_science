@@ -143,9 +143,13 @@ def q5a():
     X = data.copy().values
     y = classifications.copy().values
 
+    X_scaled = StandardScaler().fit_transform(X)
+
     # Compute the silhouette score for the GMM and KMeans, to estimate optimal number of clusters
-    kmeans_silhouette_scores = compute_silhouette_score('kmeans', X, range(2, 10))
-    gmm_silhouette_scores = compute_silhouette_score('gmm', X, range(2, 10))
+    kmeans_silhouette_scores = compute_silhouette_score(
+        'kmeans', X_scaled, range(2, 10)
+    )
+    gmm_silhouette_scores = compute_silhouette_score('gmm', X_scaled, range(2, 10))
 
     fig, ax = plt.subplots()
 
@@ -181,10 +185,10 @@ def q5a():
 
     # Now we compute optimal n_init to converge on a good number of clusters
     kmeans_n_init = optimal_n_init_kmeans(
-        X, [1] + list(range(2, 11, 2)) + list(range(14, 25, 4))
+        X_scaled, [1] + list(range(2, 11, 2)) + list(range(14, 25, 4))
     )
     gmm_n_init = optimal_n_init_gmm(
-        X, [1] + list(range(2, 11, 2)) + list(range(14, 25, 4))
+        X_scaled, [1] + list(range(2, 11, 2)) + list(range(14, 25, 4))
     )
 
     fig, ax = plt.subplots()
@@ -226,7 +230,7 @@ def q5a():
     gmm = GaussianMixture(n_components=2, n_init=50, random_state=3438)
     kmeans = KMeans(n_clusters=2, n_init=50, random_state=8343)
 
-    y_pred_gmm, y_pred_kmeans = predict_and_relabel(X, gmm, kmeans)
+    y_pred_gmm, y_pred_kmeans = predict_and_relabel(X_scaled, gmm, kmeans)
 
     cmatrix = pd.DataFrame(confusion_matrix(y_pred_gmm, y_pred_kmeans))
     cmatrix[3] = cmatrix.sum(axis=1)

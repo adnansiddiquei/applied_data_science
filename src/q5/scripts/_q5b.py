@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import confusion_matrix
+from sklearn.preprocessing import StandardScaler
 
 
 def q5b():
@@ -31,6 +32,8 @@ def q5b():
     X = data.copy().values
     y = classifications.copy().values
 
+    X_scaled = StandardScaler().fit_transform(X)
+
     # Load the classifications predicted from q5a
     predicted_classifications = load_dict_from_json(
         __file__, 'q5a_classifications.json'
@@ -42,12 +45,12 @@ def q5b():
     (
         feature_importance_gmm,
         most_importance_features_gmm,
-    ) = compute_most_important_features_logit(X, y_pred_gmm_q5a)
+    ) = compute_most_important_features_logit(X_scaled, y_pred_gmm_q5a)
 
     (
         feature_importance_kmeans,
         most_importance_features_kmeans,
-    ) = compute_most_important_features_logit(X, y_pred_kmeans_q5a)
+    ) = compute_most_important_features_logit(X_scaled, y_pred_kmeans_q5a)
 
     rolling_overlap = (
         compute_rolling_intersection_pct(
@@ -118,6 +121,7 @@ def q5b():
     ax2 = ax.twinx()
     ax2.plot(rolling_overlap, label='Rolling Feature Overlap %', color='darkorange')
     ax2.set_ylabel('Rolling Feature Overlap %')
+    ax2.set_ylim(-5, 105)
 
     format_axes([ax, ax2], combine_legends=True)
 
@@ -147,12 +151,15 @@ def q5b():
     X_subset_gmm = data[most_importance_features_gmm['feature']].copy().values
     X_subset_kmeans = data[most_importance_features_kmeans['feature']].copy().values
 
+    X_subset_gmm_scaled = StandardScaler().fit_transform(X_subset_gmm)
+    X_subset_kmeans_scaled = StandardScaler().fit_transform(X_subset_kmeans)
+
     # Now let's compute the clusterings
     gmm = GaussianMixture(n_components=2, n_init=50, random_state=3438)
     kmeans = KMeans(n_clusters=2, n_init=50, random_state=8343)
 
-    y_pred_gmm = gmm.fit_predict(X_subset_gmm)
-    y_pred_kmeans = kmeans.fit_predict(X_subset_kmeans)
+    y_pred_gmm = gmm.fit_predict(X_subset_gmm_scaled)
+    y_pred_kmeans = kmeans.fit_predict(X_subset_kmeans_scaled)
 
     # We have to re-label, in the case that the labels have been flipped from q5a
     if np.sum(y_pred_gmm == y_pred_gmm_q5a) / len(y_pred_gmm) < 0.5:
