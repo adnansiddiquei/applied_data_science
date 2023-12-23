@@ -6,9 +6,114 @@ from sklearn.metrics import (
     precision_recall_fscore_support,
     accuracy_score,
     confusion_matrix,
+    pairwise_distances,
 )
 from sklearn.model_selection import StratifiedKFold
 from numpy.typing import NDArray
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from scipy.optimize import linear_sum_assignment
+from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
+
+
+def predict_and_relabel(X, gmm: GaussianMixture, kmeans: KMeans):
+    """
+    Predict the cluster labels for X using the GMM and KMeans models, and relabel the clusters so that the
+    cluster labels indicate the same cluster for each model. This is done by solving the linear sum assignment
+    problem.
+
+    Using this, we can actually compute a meaningful confusion matrix.
+    """
+    y_pred_gmm = gmm.fit_predict(X)
+    y_pred_kmeans = kmeans.fit_predict(X)
+
+    distances = pairwise_distances(gmm.means_, kmeans.cluster_centers_)
+    row_ind, col_ind = linear_sum_assignment(distances)
+
+    y_pred_kmeans = (
+        pd.Series(y_pred_kmeans)
+        .replace({col_ind[i]: row_ind[i] for i in range(len(row_ind))})
+        .values
+    )
+
+    return y_pred_gmm, y_pred_kmeans
+
+
+def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):
+    X = X.copy()
+    y = y.copy()
+
+    pipeline = Pipeline(
+        [
+            ('scaler', StandardScaler()),
+            (
+                'logistic_regression',
+                LogisticRegression(multi_class='multinomial', random_state=3438),
+            ),
+        ]
+    )
+
+    pipeline.fit(X, y)
+
+    feature_importance = (
+        pd.DataFrame(pipeline['logistic_regression'].coef_.T ** 2)
+        .mean(axis=1)
+        .reset_index()
+        .sort_values(0, ascending=False)
+        .reset_index(drop=True)
+        .rename(columns={'index': 'feature', 0: 'importance'})
+    )
+
+    # Normalise the feature importance
+    feature_importance['importance'] = (
+        feature_importance['importance'] / feature_importance['importance'].sum()
+    )
+
+    feature_importance['feature'] = [
+        f'Fea{feature + 1}' for feature in feature_importance['feature']
+    ]
+
+    feature_importance['cumulative_importance'] = feature_importance[
+        'importance'
+    ].cumsum()
+
+    most_importance_features = feature_importance[
+        feature_importance['cumulative_importance'].round(4) <= 0.95
+    ]
+
+    return feature_importance, most_importance_features
+
+
+def compute_most_important_features_random_forest(X: np.ndarray, y: np.ndarray):
+    X = X.copy()
+    y = y.copy()
+
+    clf = RandomForestClassifier(random_state=3438)
+
+    clf.fit(X, y)
+
+    feature_importance = (
+        pd.DataFrame(clf.feature_importances_)
+        .reset_index()
+        .rename(columns={0: 'gini_importance', 'index': 'feature'})
+        .sort_values('gini_importance', ascending=False)
+        .reset_index(drop=True)
+    )
+
+    feature_importance['feature'] = [
+        f'Fea{feature + 1}' for feature in feature_importance['feature']
+    ]
+    feature_importance['cumulative_importance'] = feature_importance[
+        'gini_importance'
+    ].cumsum()
+
+    most_importance_features = feature_importance[
+        feature_importance['cumulative_importance'].round(4) <= 0.95
+    ]
+
+    return feature_importance, most_importance_features
 
 
 def cross_validate_report(

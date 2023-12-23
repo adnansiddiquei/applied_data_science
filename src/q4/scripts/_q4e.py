@@ -9,37 +9,8 @@ from src.utils import (
     format_contingency_table,
     create_table,
     plot_feature_importance,
+    compute_most_important_features_random_forest,
 )
-
-
-def compute_most_important_features_random_forest(X: np.ndarray, y: np.ndarray):
-    X = X.copy()
-    y = y.copy()
-
-    clf = RandomForestClassifier(random_state=3438)
-
-    clf.fit(X, y)
-
-    feature_importance = (
-        pd.DataFrame(clf.feature_importances_)
-        .reset_index()
-        .rename(columns={0: 'gini_importance', 'index': 'feature'})
-        .sort_values('gini_importance', ascending=False)
-        .reset_index(drop=True)
-    )
-
-    feature_importance['feature'] = [
-        f'Fea{feature + 1}' for feature in feature_importance['feature']
-    ]
-    feature_importance['cumulative_importance'] = feature_importance[
-        'gini_importance'
-    ].cumsum()
-
-    most_importance_features = feature_importance[
-        feature_importance['cumulative_importance'].round(4) <= 0.95
-    ]
-
-    return feature_importance, most_importance_features
 
 
 def q4e():

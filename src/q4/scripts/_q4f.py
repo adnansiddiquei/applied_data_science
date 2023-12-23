@@ -10,55 +10,12 @@ from src.utils import (
     save_fig,
     plot_feature_importance,
     format_axes,
+    compute_most_important_features_logit,
+    compute_rolling_intersection_pct,
 )
 import numpy as np
 import matplotlib.pyplot as plt
 from ._q4e import compute_most_important_features_random_forest
-
-
-def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):
-    X = X.copy()
-    y = y.copy()
-
-    pipeline = Pipeline(
-        [
-            ('scaler', StandardScaler()),
-            (
-                'logistic_regression',
-                LogisticRegression(multi_class='multinomial', random_state=3438),
-            ),
-        ]
-    )
-
-    pipeline.fit(X, y)
-
-    feature_importance = (
-        pd.DataFrame(pipeline['logistic_regression'].coef_.T ** 2)
-        .mean(axis=1)
-        .reset_index()
-        .sort_values(0, ascending=False)
-        .reset_index(drop=True)
-        .rename(columns={'index': 'feature', 0: 'importance'})
-    )
-
-    # Normalise the feature importance
-    feature_importance['importance'] = (
-        feature_importance['importance'] / feature_importance['importance'].sum()
-    )
-
-    feature_importance['feature'] = [
-        f'Fea{feature + 1}' for feature in feature_importance['feature']
-    ]
-
-    feature_importance['cumulative_importance'] = feature_importance[
-        'importance'
-    ].cumsum()
-
-    most_importance_features = feature_importance[
-        feature_importance['cumulative_importance'].round(4) <= 0.95
-    ]
-
-    return feature_importance, most_importance_features
 
 
 def plot_feature_importance_with_rolling_overlap(X, y):
@@ -74,26 +31,16 @@ def plot_feature_importance_with_rolling_overlap(X, y):
         most_importance_features_rf,
     ) = compute_most_important_features_random_forest(X, y)
 
-    def compute_overlap(fi1, fi2):
-        num_features = len(fi1)
-        overlap_rolling_pct = np.zeros(num_features - 1)
-
-        for i in range(num_features - 1):
-            features_in_fi1 = fi1.iloc[: i + 1]['feature'].values
-            features_in_fi2 = fi2.iloc[: i + 1]['feature'].values
-
-            overlap_count = np.intersect1d(features_in_fi1, features_in_fi2)
-
-            overlap_rolling_pct[i] = len(overlap_count) / (i + 1)
-
-        return overlap_rolling_pct
-
     rolling_overlap = (
-        compute_overlap(feature_importance_logit, feature_importance_rf) * 100
+        compute_rolling_intersection_pct(
+            feature_importance_logit['feature'].values,
+            feature_importance_rf['feature'].values,
+        )
+        * 100
     )
 
     fig, ax = plot_feature_importance(
-        feature_importance_logit, most_importance_features_logit, label='MSLI'
+        feature_importance_logit, most_importance_features_logit, label='NMSLI'
     )
     plt.ylabel('Cum. Norm. Mean Squared Logit Importance (NMSLI)')
 
@@ -101,8 +48,7 @@ def plot_feature_importance_with_rolling_overlap(X, y):
     ax2.plot(rolling_overlap, label='Rolling Feature Overlap %', color='darkorange')
     ax2.set_ylabel('Rolling Feature Overlap %')
 
-    format_axes(ax2, ticks_left=False)
-    format_axes(ax, ticks_right=False)
+    format_axes([ax, ax2], combine_legends=True)
 
     crossover = rolling_overlap[len(most_importance_features_logit)]
 
@@ -119,17 +65,6 @@ def plot_feature_importance_with_rolling_overlap(X, y):
     )
 
     ax.autoscale(enable=True, tight=True, axis='x')
-
-    # Collect the legend handles and labels
-    handles, labels = ax.get_legend_handles_labels()
-    handles2, labels2 = ax2.get_legend_handles_labels()
-
-    # Combine the handles and labels
-    handles.extend(handles2)
-    labels.extend(labels2)
-
-    # into  a single legend
-    ax.legend(handles, labels, loc='lower right')
 
     return fig, ax
 

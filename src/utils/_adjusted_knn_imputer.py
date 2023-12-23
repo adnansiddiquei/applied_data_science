@@ -18,12 +18,14 @@ class AdjustedKNNImputer(BaseEstimator, TransformerMixin):
         n_components=2,
         iter_max=None,
         impute_type: Literal['outliers', 'nans'] = 'outliers',
+        random_state=3438,
     ):
         self.z_score_threshold = z_score_threshold
         self.n_neighbors = n_neighbors
         self.n_components = n_components
         self.iter_max = iter_max
         self.impute_type = impute_type
+        self.random_state = random_state
 
         self.X: np.ndarray | None = None
         self.nan_positions: np.ndarray | None = None
@@ -32,7 +34,7 @@ class AdjustedKNNImputer(BaseEstimator, TransformerMixin):
         self.n_iters = 0
 
     def fit(self, X: pd.DataFrame | np.ndarray, y=None):
-        np.random.seed(3438)
+        np.random.seed(self.random_state)
 
         if self.impute_type == 'nans':
             self.nan_positions = (
@@ -94,6 +96,8 @@ class AdjustedKNNImputer(BaseEstimator, TransformerMixin):
 
     def transform(self, X: pd.DataFrame | np.ndarray, y=None):
         """Impute outliers until it gets down to the expected number of outliers."""
+        np.random.seed(self.random_state)
+
         self.X = X.copy().values if isinstance(X, pd.DataFrame) else X.copy()
         X = self.X.copy()
 
