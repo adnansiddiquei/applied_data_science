@@ -240,10 +240,10 @@ def q5a():
         cmatrix.values,
         columns=['1', '2', 'Tot. (GMM)'],
         index=['1', '2', 'Tot. (KMeans)'],
-        figsize=(3, 3),
+        figsize=(4.5, 2),
+        fontsize=16,
+        scale=(1.6, 2),
     )
-
-    tbl.scale(1.2, 1.2)
 
     tbl[(3, 2)].set_facecolor('white')
     tbl[(3, 2)].set_text_props(color='black')

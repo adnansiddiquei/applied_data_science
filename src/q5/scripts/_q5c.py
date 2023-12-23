@@ -163,4 +163,11 @@ def q5c():
         color='grey',
     )
 
+    ax[0, 0].set_title('Cluster Membership')
+    ax[0, 1].set_title('Most Discriminative Feature')
+    ax[0, 2].set_title('2nd Most Discriminative Feature')
+
+    ax[0, 0].set_ylabel('GMM')
+    ax[1, 0].set_ylabel('KMeans')
+
     save_fig(__file__, 'q5c.png')
