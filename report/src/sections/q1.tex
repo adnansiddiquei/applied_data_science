@@ -97,28 +97,21 @@
     \centering
     \includegraphics[width=1\textwidth]{./figures/q1e}
     \caption{The k-means clusterings performed with $k=3$, shown on the contingency table in Fig\eqref{fig:q1d}, plotted
-        on the first two principal components of the dataset shown in Fig\eqref{fig:q1b}. The left plot is
-        \inlinecode{kmeans_1} and the right plot is \inlinecode{kmeans_2}.}
+        on the first two principal components of the dataset shown in Fig\eqref{fig:q1b}.}
     \label{fig:q1e}
     \end{figure}
 
     Fig\eqref{fig:q1e} shows the k-means clusterings on the PCA plot shown in Fig\eqref{fig:q1b}.
-    The PCA indicates that there are two clusters in the dataset when it is reduced to the first two principal components
-    (which generally explain a large amount of the variance in a dataset).
-    Fig\eqref{fig:q1e} provides subtle evidence in favour of this as well, note that clusters 1 and 3 are stable, but cluster
-    2 jumps between the two groups in the PCA plots, whilst only capturing observations from either one of the groups
-    but never both.
-    The fact that cluster 2 never captures data from both groups in the PCA plot indicates that it is likely capturing
-    a subset of the data from one of the PCA groups, based on random initialisation of the k-means algorithm.
-    Its inability to capture data from both PCA groups at once, and the clear separation of clusters 1 and 3 indicate
-    that there may only be two clusters in the dataset, as opposed to the three clusters that the labels indicate.
+    Visually, the 2-component PCA indicates that there are two clusters in the dataset.
+    Fig\eqref{fig:q1e} also provides subtle evidence in favour of this as well, note the instability of cluster 2 in
+    both plots, and it's inability to capture data from both PCA groups at once.
+    This, combined with the clear separation of clusters 1 and 3 indicate that there may only be two clusters in the
+    dataset, as opposed to the three clusters that the labels indicate.
 
     Performing k-means before PCA has the advantage of being able to visualise the clusters separation in the original
-    feature space, whilst performing PCA before k-means has the advantage of being able to reduce computational load
-    and identify clusters along the first two principal components (which often explain the most variance in the dataset).
-    Performing PCA first also provides a visual way to determine the number of clusters in the dataset if is is unknown as
-    PCA will separate data along the two most discriminative axis.
-    If the number of clusters is unknown, performing PCA first would be a good idea.
-    As to which is better, it can depend on the dataset and the number of features.
-    It can often turn out that the first two principal components do not actually explain much of the variance, and as
-    such, in these cases it can be better to perform k-means first.
+    feature space.
+    However, this might not map well onto the PCA space, as the clusters may be more separable, or separate differently,
+    in the original feature space than in the 2-component PCA space.
+    It is generally better to perform n-component PCA (or some form of dimensionality reduction or feature selection)
+    before k-means as it can reduce noise and mitigate the curse of dimensionality \cite{bellman1957} where distances
+    become less meaningful in higher dimensions.
