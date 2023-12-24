@@ -86,6 +86,8 @@ def kmeans_on_dataset_a(n_clusters, random_state):
         + ['Total'],
         index=[f'Cluster {i + 1}' for i in range(contingency_table.values.shape[0] - 1)]
         + ['Total'],
+        fontsize=16,
+        scale=(1.5, 2),
     )
 
     # Make the bottom right cell disappear

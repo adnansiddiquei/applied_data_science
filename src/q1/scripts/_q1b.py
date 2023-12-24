@@ -7,6 +7,10 @@ from matplotlib.patches import FancyArrowPatch
 
 
 def q1b():
+    """Q1b
+
+    Apply PCA to visualise the features in 2D.
+    """
     data = load_dataset(
         'A_NoiseAdded.csv',
         drop_columns=['Unnamed: 0', 'classification'],
@@ -29,10 +33,12 @@ def q1b():
     ax2.set_xlim(-0.3, 0.3)
     ax2.set_ylim(-0.3, 0.3)
 
+    # Axes labels
+    ax.set_xlabel('PC1')
+    ax.set_ylabel('PC2')
+
     # Transpose makes it easier to plot
     loadings = pca.components_.T
-
-    # Draw arrows from (0,0) to the end of each loading vector
 
     # Draw arrows for only loadings that contribute >2% to either PC
     pct = 0.02
@@ -58,20 +64,19 @@ def q1b():
                 label=f'Fea{i + 1}',
             )
         elif i < 20:
-            if i + 1 in [5, 18, 19, 20, 14, 11, 13]:
+            if i + 1 in [11, 13, 14, 18, 19, 20]:
                 arrow = FancyArrowPatch(
                     (0, 0),
                     (loading[0], loading[1]),
-                    color='k',
-                    linestyle=(0, (1, 3)),
-                    linewidth=1.3,
+                    color='red',
+                    linewidth=1,
                 )
                 ax2.add_patch(arrow)
             else:
                 arrow = FancyArrowPatch(
                     (0, 0),
                     (loading[0], loading[1]),
-                    color='k',
+                    color='forestgreen',
                     linewidth=1,
                 )
                 ax2.add_patch(arrow)
@@ -90,8 +95,5 @@ def q1b():
     ax2.legend()
     format_axes(ax, ticks_right=False, ticks_top=False)
     format_axes(ax2, ticks_bottom=False, ticks_left=False, legend_loc='upper left')
-
-    ax.set_xlabel('Principal Component 1')
-    ax.set_ylabel('Principal Component 2')
 
     save_fig(__file__, 'q1b.png')

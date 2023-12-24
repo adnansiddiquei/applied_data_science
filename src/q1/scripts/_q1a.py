@@ -1,69 +1,46 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from src.utils import format_axes, load_dataset, save_fig
+from sklearn.cluster import KMeans
 
 
 def q1a():
+    """Q1a
+
+    Generate density plots for the first 20 features. Include the figure in your report and state what you observe.
+    """
+    # Load the dataset
     data = load_dataset(
         'A_NoiseAdded.csv', drop_columns=['Unnamed: 0', 'classification']
     )
 
-    # Plot the KDE of the first 20 Features
-    features = data.columns[0:20]
+    # Split off the first 20 features, then we will group them by their variance to plot them separately
+    feats20 = data[data.columns[0:20]]
+    var_feats20 = np.array(feats20.var())
 
-    # Create a colourmap for the features, for the line plots
-    colormap = plt.cm.viridis
-    norm = plt.Normalize(vmin=0, vmax=len(features) - 1)
-    colors = [colormap(norm(value)) for value in range(len(features))]
-
-    fig, ax = plt.subplots(figsize=(12, 8))
-    ax2 = ax.twinx()
-
-    # Plot the total KDE of all 20 features combined
-    combined_data = pd.Series(
-        np.concatenate([data[feature].values for feature in features])
-    )
-    combined_data.plot(
-        kind='density', linestyle='--', color='black', ax=ax, label='Combined KDE'
+    n_clusters = 2
+    groups = KMeans(n_clusters=n_clusters, random_state=3438).fit_predict(
+        var_feats20.reshape(-1, 1)
     )
 
-    # Plot the KDE of the first 20 features
-    for i, feature in enumerate(features):
-        if i + 1 in [5, 18, 19, 20, 14, 11, 13]:
-            c = {
-                5: 'b',
-                11: 'y',
-                13: 'gray',
-                14: 'm',
-                18: 'g',
-                19: 'r',
-                20: 'c',
-            }
-            data[feature].plot(
-                kind='density',
-                label=f'* {feature}',
-                color=c[i + 1],
-                ax=ax2,
-                linestyle=':',
-            )
-        else:
-            data[feature].plot(kind='density', label=feature, color=colors[i], ax=ax2)
+    # Now create the plot, we will do 2 plots, as we have split the data into 2 groups
+    fig, ax = plt.subplots(figsize=(10, 6 * n_clusters), nrows=n_clusters, ncols=1)
 
-    plt.xlabel('Value')
+    for c, group in zip(feats20.columns, groups):
+        feats20[c].plot(kind='density', ax=ax[group], label=c)
 
-    ax.set_ylabel('Kernel Density Estimate')
-    ax2.set_ylabel('')
+    [ax[i].legend() for i in range(n_clusters)]
+    [format_axes(ax[i]) for i in range(n_clusters)]
+    [ax[i].set_ylim(-0.1, 2.8) for i in range(n_clusters)]
+    [ax[i].set_xlim(-2, 8) for i in range(n_clusters)]
 
-    ax.legend()
-    ax2.legend()
+    ax[0].title.set_text(
+        f'Lower Variance Features ({var_feats20[np.where(groups == 0)].min().round(2)} < Var < {var_feats20[np.where(groups == 0)].max().round(2)})'
+    )
+    ax[1].title.set_text(
+        f'Higher Variance Features ({var_feats20[np.where(groups == 1)].min().round(2)} < Var < {var_feats20[np.where(groups == 1)].max().round(2)})'
+    )
 
-    # Format the axes to same the style used throughout the report
-    format_axes(ax, ticks_right=False, legend_loc='upper left')
-    format_axes(ax2, ticks_left=False, legend_loc='upper right')
-
-    # Scale the x-axis
     plt.autoscale(enable=True, axis='x', tight=True)
-    plt.xlim(-2, 8)
 
     save_fig(__file__, 'q1a.png')

@@ -57,4 +57,13 @@ def q1e():
     format_axes(ax[0])
     format_axes(ax[1])
 
+    ax[0].set_xlabel('PC1')
+    ax[0].set_ylabel('PC2')
+
+    ax[1].set_xlabel('PC1')
+    ax[1].set_ylabel('PC2')
+
+    ax[0].set_title(r'$kmeans\_1$')
+    ax[1].set_title(r'$kmeans\_2$')
+
     save_fig(__file__, 'q1e.png')
