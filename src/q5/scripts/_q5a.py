@@ -176,7 +176,7 @@ def q5a():
     )
 
     plt.ylabel('Silhouette Score')
-    plt.xlabel('Number of Clusters')
+    plt.xlabel(r'Number of Clusters (K-Means) or Components (GMM) $k$')
 
     format_axes(ax)
     plt.legend()
@@ -192,6 +192,8 @@ def q5a():
     )
 
     fig, ax = plt.subplots()
+
+    plt.xlabel(r'Number of Initializations $n\_init$')
 
     plt.errorbar(
         kmeans_n_init.index,
