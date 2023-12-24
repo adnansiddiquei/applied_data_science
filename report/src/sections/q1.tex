@@ -64,32 +64,31 @@
     \end{figure}
 
     Fig\eqref{fig:q1c} shows the contingency table for two k-means clusterings of the dataset with $k=8$ and $k=3$.
+    Standardisation was applied before clustering as k-means is sensitive to feature scaling.
     The two clusterings (\inlinecode{kmeans_1} and \inlinecode{kmeans_2}) were formed by training two k-means models on
-    half of the dataset, and then the other half were mapped onto the learned clusters.
-    Standardisation was applied to each feature before clustering as k-means is sensitive to feature scaling, this is because
-    k-means works by computing a centroid for each cluster such that the sum of the squared Euclidean distances between
-    each centroid and the observations in the cluster is minimised.
-    Therefore, without standardisation, features with larger variances and scale will dominate the clustering.
-    Predictions are then made by assigning new observations to the cluster whose centroid is closest to the
-    observation \cite{sklearn-k-means}.
-    Crucially, the labels assigned to each cluster from each k-means computation are arbitrary, therefore, the labels
-    in \inlinecode{kmeans_2} were mapped back to the labels in \inlinecode{kmeans_1} by finding which centroids in each
-    clustering were closest to each other.
+    half of the dataset, and then the other half were mapped onto the learned clusters by assigning new observations
+    to the cluster whose centroid is closest to the observation \cite{sklearn-k-means}.
+    This is possible because the two models were trained on the same dataset, and so the centroids are in the same
+    feature space.
+    Labels from each model were re-labelled using the Hungarian algorithm \cite{scipy-linsumopt} \cite{assignment-problem} on
+    the pair-wise distances between the centroids of each model, such that label 1 in \inlinecode{kmeans_1} referred to
+    label 1 in
+    \inlinecode{kmeans_2}.
     This step was crucial, otherwise the contingency table would be meaningless.
 
-    For $k=8$, 59\% of the observations lie on the leading diagonal, which indicates that the two clusterings were not very
-    similar or stable, as a large proportion of the observations were assigned to different clusters in each clustering.
-    \inlinecode{kmeans_1} clustered 85\% of the observations into clusters 1, 2 and 3.
-    \inlinecode{kmeans_2} clustered 86\% of the observations into clusters 1 and 2.
-    This indicates that both clusterings identified most of the data lives within a small set of clusters, which was
-    expected as the dataset is labelled and so it is known that there are only 3 clusters - both clusterings identified
-    at least 2 similar clusters (1 and 2).
+    $k=8$ gave a stability of 59\% (the agreement on the leading diagonal), indicating that the two models were
+    not very similar, or stable.
+    However, \inlinecode{kmeans_1} clustered 85\% of the observations into clusters 1, 2 and 3 and \inlinecode{kmeans_2}
+    clustered 86\% of the observations into clusters 1 and 2, indicates that both models correctly identified that most of the data
+    lives within a small set of clusters.
     However, the presence of very small clusters indicates that there may be outliers present in the dataset or smaller
     clusters that the large $k=8$ is overfitting to.
 
-    Fig\eqref{fig:q1d} shows the contingency table for two k-means clusterings of the dataset with $k=3$.
+    Fig\eqref{fig:q1d} shows the contingency table for two k-means clusterings of the dataset with $k=3$, which gave a
+    marginally better stability of 69\%.
     A larger proportion of the observations lie on the leading diagonal compared to $k=8$, which is expected because
-    the number of clusters is both smaller and equal to the actual number of clusters in the dataset.
+    the number of clusters is both smaller and equal to the number of clusters in the classifications column of the
+    dataset.
     \inlinecode{kmeans_2} identified 3 distinct clusters whereas \inlinecode{kmeans_1} only identified 2 distinct
     clusters with a few remnant observations in assigned to cluster 2.
 

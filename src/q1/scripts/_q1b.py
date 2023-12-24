@@ -7,6 +7,10 @@ from matplotlib.patches import FancyArrowPatch
 
 
 def q1b():
+    """Q1b
+
+    Apply PCA to visualise the features in 2D.
+    """
     data = load_dataset(
         'A_NoiseAdded.csv',
         drop_columns=['Unnamed: 0', 'classification'],
