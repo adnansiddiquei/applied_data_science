@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
 from scipy.stats import norm
-from ._ml import identify_outliers
+from .ml import identify_outliers
 from typing import Literal
 from sklearn.impute import SimpleImputer
 
