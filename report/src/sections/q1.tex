@@ -26,24 +26,19 @@
         either principal component more than 2\%, these are the most discriminative features.
         Every other loading vector has been plotted in very light grey so their general directions and magnitudes are
         visible.
-        The loading vectors for the first 20 features have also been plotted in darker black lines, with the dotted
-        black lines corresponding to the dotted KDEs in Fig\eqref{fig:q1a}.
+        The loading vectors for the Fig.\eqref{fig:q1a} upper and lower have been plotted in green and red headless
+        arrows respectively.
         The loading vectors use the right and top axis of the plot.
-        The blue dots indicate the scores for each observation in the dataset for the first two principal components.
-        The scores use the left and bottom axis of the plot.
-        All four axis are symmetric about the origin for ease of comparison.}
+        The blue dots indicate the scores for each observation in the dataset for the first two principal components.}
     \label{fig:q1b}
     \end{figure}
 
-    The biplot in Fig\eqref{fig:q1b} shows a PCA of the entire dataset, after standardisation has been applied to each
-    feature.
-    The coloured arrows indicate the loadings of the features which contribute more than 2\% to either principal
-    component, which implies that none of the first 20 features are particularly discriminative.
-    An interesting observation is that the most discriminative features are very disciminative with respect to the
-    second principal component, whereas the less discriminative features (of which there are many, many more of) are
-    more discriminative with respect to the first principal component.
-    As a result, the scores on the biplot for the observations w.r.t. the first two principal components separate the
-    observations more along the first principal component, rather than the second.
+    The biplot in Fig\eqref{fig:q1b} shows a PCA of the entire dataset, following standardisation.
+    This biplot indicates that the first 20 features are no more discriminative than the rest of the features in the
+    dataset, and the assumption that the features in Fig.\eqref{fig:q1a} lower that had more variance would be more
+    discriminative is not true as per this plot, as the green loadings tend to stretch further than the red ones.
+    Interestingly, whilst the most discriminative features discriminate along PC2, most of the features discriminate
+    along PC1, resulting in the large separation along PC1.
 
 \subsubsection{Questions 1c and 1d}\label{subsubsec:q1cd}
     \begin{figure}[htb]
