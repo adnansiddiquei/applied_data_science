@@ -25,10 +25,10 @@
 
     Two key hyperparameters in random forests are \inlinecode{max_depth} and \inlinecode{max_features}: the maximum
     internal nodes per tree and the number of features considered for splitting, respectively.
-    Typically, \inlinecode{max_depth} is set heuristically to $\sqrt{N}$, with $N$ being the feature count.
+    Typically, \inlinecode{max_features} is set heuristically to $\sqrt{N}$, with $N$ being the feature count.
 
 \subsubsection{Question 4b, 4c, 4d and 4e}\label{subsubsec:q4bcde}
-    The dataset underwent preprocessing with the outlier removal method from Section \ref{subsubsec:q3de}, followed by
+    The dataset underwent preprocessing with the outlier removal method from Q3 (Section \ref{subsec:dataset-c}), followed by
     standardisation.
     It had no duplicates or missing values.
     Due to imbalanced classes, stratified sampling was employed for train-test splitting.
@@ -50,7 +50,8 @@
     \caption{The confusion matrix and classification report averaged over 5-fold cross-validation for
         \inlinecode{ADS_baselineDataset.csv} using a random forest classifier.
         The leading diagonal show a mean 10.0\% test set error.
-        Matrix cells represent percentages of the 100-sample test set, derived from a 0.8/0.2 train-test split.}
+        Matrix cells in (a) represent mean percentage allocations of the 100-sample test set, derived from a 0.8/0.2
+        train-test split.}
     \label{fig:q4c}
     \end{figure}
 
@@ -86,7 +87,7 @@
     \label{fig:q4d_200_trees}
     \end{figure}
 
-    The \inlinecode{RandomForestClassifier} was optimised based on the out-of-bag (OOB) error rate.
+    The \inlinecode{RandomForestClassifier} was then optimised based on the out-of-bag (OOB) error rate.
     Results in Fig. \eqref{fig:q4d} indicate that post 200 trees, the OOB error rate ceases to decrease significantly.
     Fig. \eqref{fig:q4d_200_trees} summarises model performance with 200 trees, showing the test set classification error
     improved to 8.6\% and improvements in average precision, recall, and F1-scores.
@@ -121,11 +122,11 @@
 
     \inlinecode{RandomForestClassifier.feature_importances_} was used to calculate Gini importance (Fig.
     \eqref{fig:q4e_gini_importance}).
-    Gini importance measures the total normalised decrease in Gini index due to internal splits on a feature.
-    The top 322 features, representing 95\% of cumulative Gini importance, were selected for classification
+    Gini importance measures the total normalised decrease in the Gini index due to internal splits on a feature.
+    The top 322 features, representing 95\% of cumulative Gini importance, were selected for re-classification
     (see Fig. \eqref{fig:q4e}).
-    Comparing Fig. \eqref{fig:q4d_200_trees} and Fig. \eqref{fig:q4e}, results were equivalent or marginally better with the
-    reduced feature set.
+    Comparing Fig. \eqref{fig:q4d_200_trees} and Fig. \eqref{fig:q4e}, results were marginally better with the
+    reduced feature set across all metrics
 
 \subsubsection{Question 4f}\label{subsubsec:qf}
     \begin{figure}[htb]
@@ -145,7 +146,8 @@
     \caption{Confusion matrix and classification report averaged over 5-folds of cross validation for the
         \inlinecode{LogisticRegression} classifier on \inlinecode{ADS_baselineDataset.csv}.
         The leading diagonal of the confusion matrix indicates a mean 12.8\% test set classification error.
-        Matrix cells represent percentages of the 100-sample test set, derived from a 0.8/0.2 train-test split.}
+        Matrix cells in (a) represent mean percentage allocations of the 100-sample test set, derived from a 0.8/0.2
+        train-test split.}
     \label{fig:q4f_all_feats}
     \end{figure}
 
@@ -172,13 +174,13 @@
     \centering
     \includegraphics[width=0.9\textwidth]{./figures/q4f_logit_importance}
     \caption{The ordered (highest first), cumulative NMSLI of the features in the \inlinecode{LogisticRegression} model.
-        The horizontal grey line is the 95\% threshold, which contains the top 382 features. 72.8\% of these 382 features
-        were also in the top 382 features for the \inlinecode{RandomForestClassifier} indicated by the Gini importance,
-        this is what the rolling feature overlap indicates.}
+        The top horizontal grey line is the 95\% threshold, which contains the top 382 features. 72.8\% of these 382 features
+        were also in the top 382 features for the \inlinecode{RandomForestClassifier} indicated by the Gini importance
+        (Fig. \eqref{fig:q4e_gini_importance}) this is what the rolling feature overlap indicates.}
         \label{fig:q4f_logit_importance}
     \end{figure}
 
-    The procedures outlined in Sec.\eqref{subsubsec:q4bcde} were replicated using a multinomial logistic regression
+    The procedures outlined the previous section (Sec.\eqref{subsubsec:q4bcde}) were replicated using a multinomial logistic regression
     classifier, \inlinecode{LogisticRegression}.
     Fig.\eqref{fig:q4f_all_feats} and Fig.\eqref{fig:q4f_reduced_feats} illustrate the classification results using all
     features and the top 382 features, respectively.
@@ -190,4 +192,4 @@
     Gini importance and the top 382 features were identified by calculating the features that contributed to 95\% of the
     cumulative NMSLI (Fig.\eqref{fig:q4f_logit_importance}).
     A comparison of Fig.\eqref{fig:q4e} and Fig.\eqref{fig:q4f_reduced_feats} shows similar performance across all
-    metrics for both reduced feature-set models.
+    metrics for both reduced feature-set \inlinecode{RandomForestClassifier} and \inlinecode{LogisticRegression} models.

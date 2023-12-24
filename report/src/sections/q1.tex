@@ -11,10 +11,12 @@
     \label{fig:q1a}
     \end{figure}
 
-    Fig\eqref{fig:q1a} shows the kernel density estimates of the first 20 features of the dataset.
-    The majority of the features are centred around 0 with little variance, except the 6 features on the bottom plot.
-    These 6 features are likely to be more discriminative within classification algorithms, as they contain more
-    variability.
+    Fig.\eqref{fig:q1a} shows the kernel density estimates of the first 20 features of the dataset.
+    The majority of the features are centred around 0 with little variance, except the 6 features on the lower plot.
+    Values range from 0 to roughly 7.
+    The lower variance data centred around mean 0 tend to have more leptokurtic distributions with slightly positive
+    skew indicating higher likelihood of outliers being present, whilst the higher variance data is more platykurtic
+    with less skew.
 
 \subsubsection{Question 1b}\label{subsubsec:q1b}
 
@@ -33,10 +35,9 @@
     \label{fig:q1b}
     \end{figure}
 
-    The biplot in Fig\eqref{fig:q1b} shows a PCA of the entire dataset, following standardisation.
-    This biplot indicates that the first 20 features are no more discriminative than the rest of the features in the
-    dataset, and the assumption that the features in Fig.\eqref{fig:q1a} lower that had more variance would be more
-    discriminative is not true as per this plot, as the green loadings tend to stretch further than the red ones.
+    The biplot in Fig.\eqref{fig:q1b} shows a PCA of the entire dataset, following standardisation.
+    The discriminative power of the first 20 features is average, and the higher variance features in Fig.\eqref{fig:q1a}
+    are not, on average, any more discriminative than the lower variance features.
     Interestingly, whilst the most discriminative features discriminate along PC2, most of the features discriminate
     along PC1, resulting in the large separation along PC1.
 
@@ -46,14 +47,14 @@
     \begin{subfigure}[b]{0.9\linewidth}
         \includegraphics[width=1\textwidth]{./figures/q1c}
         \caption{A contingency table for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset, with $k=8$,
-            the default \inlinecode{scikit-learn} value. 240 of the 408 observations lie on the leading diagonal.}
+            the default \inlinecode{scikit-learn} value. 240 (59\%) of the 408 observations lie on the leading diagonal.}
         \label{fig:q1c}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.9\linewidth}
         \includegraphics[width=1\textwidth]{./figures/q1d}
         \caption{A contingency table for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset, with $k=3$.
-            281 of the 408 observations lie on the leading diagonal.}
+            281 (69\%) of the 408 observations lie on the leading diagonal.}
         \label{fig:q1d}
     \end{subfigure}
     \caption{Contingency tables for two k-means clusterings of the \inlinecode{A_NoiseAdded.csv} dataset with number of
@@ -63,34 +64,34 @@
     \label{fig:q1cd}
     \end{figure}
 
-    Fig\eqref{fig:q1c} shows the contingency table for two k-means clusterings of the dataset with $k=8$ and $k=3$.
+    Fig.\eqref{fig:q1cd} shows the contingency table for two k-means clusterings of the dataset with $k=8$ and $k=3$.
     Standardisation was applied before clustering as k-means is sensitive to feature scaling.
     The two clusterings (\inlinecode{kmeans_1} and \inlinecode{kmeans_2}) were formed by training two k-means models on
-    half of the dataset, and then the other half were mapped onto the learned clusters by assigning new observations
+    half of the dataset, and then the other half was mapped onto the learned clusters by assigning new observations
     to the cluster whose centroid is closest to the observation \cite{sklearn-k-means}.
-    This is possible because the two models were trained on the same dataset, and so the centroids are in the same
+    This is possible because the two models were trained on the same dataset, and so the centroids are defined in the same
     feature space.
     Labels from each model were re-labelled using the Hungarian algorithm \cite{scipy-linsumopt} \cite{assignment-problem} on
     the pair-wise distances between the centroids of each model, such that label 1 in \inlinecode{kmeans_1} referred to
-    label 1 in
-    \inlinecode{kmeans_2}.
-    This step was crucial, otherwise the contingency table would be meaningless.
+    label 1 in \inlinecode{kmeans_2}, and so on.
+    This step was crucial, otherwise the contingency tables would be meaningless.
 
-    $k=8$ gave a stability of 59\% (the agreement on the leading diagonal), indicating that the two models were
-    not very similar, or stable.
+    $k=8$ gave a stability of 59\%, indicating that the two models were not very similar, or stable.
     However, \inlinecode{kmeans_1} clustered 85\% of the observations into clusters 1, 2 and 3 and \inlinecode{kmeans_2}
-    clustered 86\% of the observations into clusters 1 and 2, indicates that both models correctly identified that most of the data
+    clustered 86\% of the observations into clusters 1 and 2, indicating that both models correctly identified that most of the data
     lives within a small set of clusters.
     However, the presence of very small clusters indicates that there may be outliers present in the dataset or smaller
     clusters that the large $k=8$ is overfitting to.
 
     Fig\eqref{fig:q1d} shows the contingency table for two k-means clusterings of the dataset with $k=3$, which gave a
     marginally better stability of 69\%.
-    A larger proportion of the observations lie on the leading diagonal compared to $k=8$, which is expected because
+    A larger proportion of the observations lie on the leading diagonal compared to $k=8$, which was expected because
     the number of clusters is both smaller and equal to the number of clusters in the classifications column of the
     dataset.
     \inlinecode{kmeans_2} identified 3 distinct clusters whereas \inlinecode{kmeans_1} only identified 2 distinct
     clusters with a few remnant observations in assigned to cluster 2.
+    So both models ($k=8$ and $k=2$) identified a similar number of distinct clusters to which most of the samples
+    belonged to.
 
 \subsubsection{Questions 1e}\label{subsubsec:q1e}
     \begin{figure}[htb]
@@ -102,16 +103,16 @@
     \end{figure}
 
     Fig\eqref{fig:q1e} shows the k-means clusterings on the PCA plot shown in Fig\eqref{fig:q1b}.
-    Visually, the 2-component PCA indicates that there are two clusters in the dataset.
-    Fig\eqref{fig:q1e} also provides subtle evidence in favour of this as well, note the instability of cluster 2 in
-    both plots, and it's inability to capture data from both PCA groups at once.
+    Visually, the 2-component PCA indicates that there are two clusters in the dataset, which  Fig\eqref{fig:q1cd} also
+    provides subtle evidence in favour of this.
+    Note the instability of cluster 2 in both plots, and it's inability to capture data from both PCA groups at once.
     This, combined with the clear separation of clusters 1 and 3 indicate that there may only be two clusters in the
-    dataset, as opposed to the three clusters that the labels indicate.
+    dataset, as opposed to the three clusters that the labelled dataset indicates.
 
-    Performing k-means before PCA has the advantage of being able to visualise the clusters separation in the original
+    Performing k-means before PCA has the advantage of being able to visualise the cluster separation in the original
     feature space.
     However, this might not map well onto the PCA space, as the clusters may be more separable, or separate differently,
-    in the original feature space than in the 2-component PCA space.
+    in the original feature space compared to the 2-component PCA space.
     It is generally better to perform n-component PCA (or some form of dimensionality reduction or feature selection)
     before k-means as it can reduce noise and mitigate the curse of dimensionality \cite{bellman1957} where distances
     become less meaningful in higher dimensions.

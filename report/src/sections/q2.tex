@@ -15,7 +15,7 @@
     \begin{subfigure}{0.9\textwidth}
       \centering
       \includegraphics[width=0.55\linewidth]{./figures/q2b_q2d}
-      \caption{\inlinecode{B_NoiseAdded.csv} after pre-processing, no missing labels or duplicated observations.
+      \caption{\inlinecode{B_NoiseAdded.csv} after pre-processing, no missing labels or duplicated observations remaining.
         The 4 numbers in the brackets indicate how the count in each classification changed due to, in order: 1 and 2
         are counts exiting and entering (respectively) the class after correcting for mislabelling; 3 -
         count exiting after dropping duplicates; 4 - count entering after imputation of missing labels.}
@@ -25,7 +25,7 @@
     \label{fig:q2abd}
     \end{figure}
 
-    Fig.\eqref{fig:q2a} summarises the classifications for \inlinecode{B_NoiseAdded.csv}.
+    Fig.\eqref{fig:q2a} summarises the classifications for the raw \inlinecode{B_NoiseAdded.csv} dataset.
     The dataset contained 20 duplicates (40 involved in the duplication, full list in Appendix \ref{appendix:q2}) and
     20 missing labels.
     10 of these 20 duplicates were also mislabelled, as they contained mismatched labels across their duplicates.
@@ -34,9 +34,9 @@
 
     Several methods exist for handling missing labels.
     One method, model based imputation (used here), involves training a model on labelled data to predict missing labels.
-    Alternatively, data with missing labels can be ignored, especially if the sample size is large.
+    Alternatively, data with missing labels can be dropped, especially if the sample size is large.
     Whilst model based imputation utilises all data, it risks bias if the model poorly fits the data.
-    Ignoring missing data avoids bias, if the samples size is large.
+    Ignoring missing data avoids bias, if the samples size is large and data is MAR.
 
     Missing at random (MAR) means a label's absence is unrelated to its value, whereas missing not at random (MNAR)
     indicates a correlation between a label's absence and its value.

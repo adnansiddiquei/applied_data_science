@@ -14,7 +14,7 @@
     \begin{subfigure}{0.9\textwidth}
         \centering
         \includegraphics[width=1\textwidth]{./figures/q3c_1}
-        \caption{The imputed data.}
+        \caption{The same samples, after imputing the missing values with PCA and KNN.}
         \label{fig:q3c}
     \end{subfigure}
     \caption{Samples and features with missing data, for the \inlinecode{C_MissingData.csv} dataset.}
@@ -26,11 +26,12 @@
     Several methods address missing data.
     Static imputation, a simple approach, replaces missing values in a feature with a constant value, like the feature's mean.
     Although computationally cost-effective, it may decrease variance and bias datasets with many missing values.
-    Alternatively, model based imputation estimates missing values per sample using a suitable model.
+    Alternatively, model based imputation estimates missing values distinctly for each sample by using a suitable model.
     For example, the K Nearest Neighbours method imputes a feature's missing value using the mean of that value from
     the sample's K nearest neighbours.
     This approach can mitigate bias and maintain variance, but in high-dimensional data, it may lead to less meaningful
-    nearest neighbours, as distances become less meaningful with increased dimensions \cite{bellman1957}.
+    nearest neighbours, as distances become less meaningful when the dimensionality is high w.r.t. the number of
+    samples \cite{bellman1957}.
 
     Multiple imputation involves using a probabilistic model to impute missing data several times, creating multiple datasets.
     These datasets can be analysed individually or their imputed values averaged.
@@ -57,24 +58,26 @@
     \label{fig:q3c_2}
     \end{figure}
 
-    Fig\eqref{fig:q3c_optimise_knn_imputer} depicts a simulation where data was removed and re-imputed using PCA and
+    Fig.\eqref{fig:q3c_optimise_knn_imputer} depicts a simulation where data was removed and re-imputed using PCA and
     KNN to assess imputation accuracy at different \inlinecode{n_neighbors} values.
     This helped in selecting \inlinecode{n_neighbors=15} for KNN imputation, as larger \inlinecode{n_neighbors} values did not significantly
     improve accuracy (lower MSE).
-    KNN combined with PCA mitigates the 'curse of dimensionality,' improving accuracy \cite{bellman1957} and aiding in
+    KNN combined with PCA mitigates the 'curse of dimensionality' \cite{bellman1957}, improving accuracy and aiding in
     identifying more meaningful neighbours.
-    KNN is preferable for clustered datasets where distance-based methods are effective and it is expected that nearest
-    neighbours share similar properties.
+    KNN imputation is preferable for clustered datasets where distance-based methods are effective and it is expected
+    that nearest neighbours share similar properties.
 
-    Fig\eqref{fig:q3c} displays the data imputed with PCA and KNN.
-    Fig\eqref{fig:q3c_2} indicates that this method largely preserved the original feature distributions.
+    Fig.\eqref{fig:q3c} displays the data after missing values were imputed with PCA and KNN.
+    Columns 1 and 4 in Fig.\eqref{fig:q3c_2} indicate that this method largely preserved the original feature distributions,
+    and column 3 indicates that this method preserved more of the original feature variance when compared to a static
+    mean imputation.
 
 \subsubsection{Question 3d and 3e}\label{subsubsec:q3de}
     \begin{figure}[htb]
     \centering
     \includegraphics[width=1\textwidth]{./figures/q3d_heatmap}
     \caption{A heatmap of the outliers in the \inlinecode{C_MissingFeatures.csv} dataset. The orange marks indicate an
-        outlier value, 2904 outlier values were identified.}
+        outlier value, 2904 (1.42\% of the values) outlier values were identified.}
     \label{fig:q3d_heatmap}
     \end{figure}
 
@@ -86,16 +89,18 @@
     \label{fig:q3e}
     \end{figure}
 
-    Outliers were identified by standardising the data and identifying values over $3\sigma$ from the mean.
-    Fig.\eqref{fig:q3d_heatmap} indicates uniformly distributed outliers across the dataset.
+    Outliers were identified by standardising the data feature-wise, and identifying values over $3\sigma$ from the mean.
+    Fig.\eqref{fig:q3d_heatmap} indicates 2904 (1.42\%) uniformly distributed outliers across the dataset.
 
     These outliers were imputed using PCA and KNN, as in Question 3c, with the justification being identical to
     Question 3c.
     Outliers were iteratively removed, with re-standardisation and outlier detection after each iteration.
-    The process iterated 8 times, stopping only after 0.27\% of the samples were outside $3\sigma$, aligning with normal
+    The process iterated 8 times, stopping only after 0.27\% of the values were outside $3\sigma$, aligning with normal
     distribution expectations.
 
-    Fig.\eqref{fig:q3e} compares the mean and standard deviation of the 81 most discriminative features, before and after
-    outlier imputation.
+    Fig.\eqref{fig:q3e} compares the mean and standard deviation of the 81 most discriminative features, before and
+    after outlier imputation.
+    These 81 features were identified in the 2-component PCA space from the magnitude of the feature loadings before
+    imputation.
     Feature variance decreased post-imputation (as expected), more so for features with near-zero means, likely due to
-    their sparsity and higher outlier likelihood.
+    their sparsity and higher outlier likelihood, briefly discussed in Q1a (Section \eqref{subsubsec:q1a}).
