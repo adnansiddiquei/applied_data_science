@@ -12,13 +12,14 @@ from src.utils import (
 def q3e():
     cwd = os.path.dirname(os.path.realpath(__file__))
 
+    # Load the data
     data = pd.read_csv(
         os.path.join(cwd, '../outputs/q3c_missing_data_imputed.csv'), index_col=0
     )
 
     data, classifications = data[data.columns[:-1]], data['classification']
 
-    # There are a total of 2904 outliers
+    # There are a total of 2904 outliers, get rid of them using the custom-made AdjustedKNNImputer
     processed_data = AdjustedKNNImputer(
         n_neighbors=15, n_components=2, z_score_threshold=3
     ).fit_transform(data)

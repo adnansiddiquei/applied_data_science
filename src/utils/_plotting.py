@@ -10,6 +10,11 @@ from matplotlib.ticker import AutoMinorLocator
 def plot_feature_importance(
     feature_importance: pd.DataFrame, most_importance_features: pd.DataFrame, **kwargs
 ):
+    """Utility function that plots the feature importance.
+
+    This function takes in the two DataFrames returned by compute_most_important_features_random_forest and
+    compute_most_important_features_logit, plots the cumulative importance and format the axes nicely.
+    """
     fig, ax = plt.subplots(figsize=(8, 5))
 
     plt.plot(
@@ -21,6 +26,7 @@ def plot_feature_importance(
 
     num_importance_features = len(most_importance_features)
 
+    # Draw the intersection of the 95% cumulative importance line and the number of features
     if 'draw_intersection' not in kwargs.keys() or kwargs['draw_intersection'] is True:
         plt.axhline(y=0.95, color='grey', linestyle='--')
         plt.axvline(x=num_importance_features, color='grey', linestyle='--')

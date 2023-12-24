@@ -43,10 +43,12 @@ def q5c():
     X_subset_scaled_gmm = StandardScaler().fit_transform(X_subset_gmm)
     X_subset_scaled_kmeans = StandardScaler().fit_transform(X_subset_kmeans)
 
+    # Compute the PCA
     pca = PCA(n_components=2)
     pca.fit(X_scaled)
     z = pca.transform(X_scaled)
 
+    # Plot the results
     fig, ax = plt.subplots(2, 3, figsize=(12, 8))
 
     colorbar_min = np.concatenate(

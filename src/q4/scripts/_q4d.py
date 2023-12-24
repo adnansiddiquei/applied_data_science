@@ -1,6 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
-import pandas as pd
 import os
 import matplotlib.pyplot as plt
 from multiprocessing import Pool
@@ -13,12 +12,15 @@ from src.utils import (
     cross_validate_report,
     format_contingency_table,
     create_table,
+    load_dataframe_from_csv,
 )
 
 
 def compute_oob_wrt_n_estimators(X, y, random_seed: int) -> list[float]:
+    """Compute the OOB error rate for a RandomForestClassifier for a variety of n_estimators"""
     np.random.seed(random_seed)
 
+    # These are oob error rates we will calculate for
     n_estimators = list(range(5, 501, 5))
 
     oob_error_rate = []
@@ -35,8 +37,9 @@ def compute_oob_wrt_n_estimators(X, y, random_seed: int) -> list[float]:
 def q4d():
     cwd = os.path.dirname(os.path.realpath(__file__))
 
-    data = pd.read_csv(
-        f'{cwd}/../outputs/ADS_baselineDataset_preprocessed.csv', index_col=0
+    # Load data
+    data = load_dataframe_from_csv(
+        __file__, 'ADS_baselineDataset_preprocessed.csv', index_col=0
     )
 
     data, classifications = data[data.columns[:-1]], data['type']
@@ -44,6 +47,7 @@ def q4d():
     X = data.copy().values
     y = classifications.copy().values
 
+    # Compute the OOB error rate for a variety of n_estimators, we do this in parallel
     all_args = [(X, y, seed) for seed in range(20)]
 
     with Pool(compute_num_cores_to_utilise()) as pool:
@@ -54,6 +58,7 @@ def q4d():
     results = np.column_stack(results)
     n_estimators = list(range(5, 501, 5))
 
+    # Plot the results
     fig, ax = plt.subplots(figsize=(10, 5))
 
     means = np.mean(results, axis=1)
@@ -71,6 +76,8 @@ def q4d():
     format_axes(ax)
     save_fig(__file__, 'q4d.png')
 
+    # Now we compute and output the confusion matrix and classification report for the RandomForestClassifier with
+    # 200 trees
     report, cmatrix, test_set_classification_error = cross_validate_report(
         X, y, RandomForestClassifier(random_state=683, n_estimators=200)
     )

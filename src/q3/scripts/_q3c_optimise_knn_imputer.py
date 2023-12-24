@@ -23,7 +23,11 @@ def set_random_nans(arr, percent=0.01, seed=3438):
 
 
 def optimise_knn_imputer(y: np.ndarray, n_neighbors: list):
-    """Optimises the n_neighbors parameter for KNNImputer."""
+    """Computes the variance and MSE for a given list of n_neighbors.
+
+    Randomly removes 5% of the values in y, and imputes them using KNNImputer with the given n_neighbors.
+    This is repeated 10 times, and the mean and standard deviation of the variance and MSE are returned.
+    """
     y = y.copy()
 
     results = pd.DataFrame(
@@ -62,8 +66,10 @@ def q3c_optimise_knn_imputer():
     data = load_dataset('C_MissingFeatures.csv', ['Unnamed: 0']).dropna()
     data, classifications = data[data.columns[:-1]], data['classification']
 
+    # These are the values of n_neighbors we will test
     Ns = [2, 5, 10, 15, 20, 30]
 
+    # Compute how the variance and MSE change with n_neighbors
     results = optimise_knn_imputer(data.values, Ns)
 
     # Plot the results

@@ -6,6 +6,7 @@ import numpy as np
 
 
 def q2b_and_q2d():
+    # Load the dataset
     data = load_dataset('B_Relabelled.csv', ['Unnamed: 0'], standardise=True)
     data, classifications = data[data.columns[:-1]], data['classification']
 
@@ -32,7 +33,7 @@ def q2b_and_q2d():
     duplicate_mapping['c0'] = duplicate_mapping['c0'].astype(int)
     duplicate_mapping['c1'] = duplicate_mapping['c1'].astype(int)
 
-    # This gets rif of all the rows in duplicate_mapping where the duplicated features have been assigned the same
+    # This gets rid of all the rows in duplicate_mapping where the duplicated features have been assigned the same
     # classification
     dm_mislabelled = duplicate_mapping[
         duplicate_mapping['c0'] != duplicate_mapping['c1']

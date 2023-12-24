@@ -11,6 +11,10 @@ from sklearn.metrics import confusion_matrix
 
 
 def kmeans_on_dataset_a(n_clusters, random_state):
+    """
+    A general function which does 1c and 1d, provided a n_clusters, as both these questions are identical with the
+    exception of the number of clusters.
+    """
     data = load_dataset(
         'A_NoiseAdded.csv',
         drop_columns=['Unnamed: 0', 'classification'],

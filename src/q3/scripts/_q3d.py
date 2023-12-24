@@ -8,9 +8,11 @@ import pandas as pd
 def q3d():
     cwd = os.path.dirname(os.path.realpath(__file__))
 
+    # Load the data
     data = pd.read_csv(
         os.path.join(cwd, '../outputs/q3c_missing_data_imputed.csv'), index_col=0
     )
+
     data, classifications = data[data.columns[:-1]], data['classification']
 
     # There are a total of 2904 outliers

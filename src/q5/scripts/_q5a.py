@@ -19,6 +19,9 @@ from src.utils import (
 
 
 def _optimal_n_init_kmeans_parallel(X, n_init, n_clusters=2, iters=5):
+    """The underlying function called by optimal_n_init_kmeans, extracting this piece of the logic into a separate
+    function allows us to parallelize the computation of the inertia over multiple n_inits.
+    """
     return np.array(
         [
             KMeans(n_clusters=n_clusters, n_init=n_init, random_state=j * n_init)
@@ -30,6 +33,7 @@ def _optimal_n_init_kmeans_parallel(X, n_init, n_clusters=2, iters=5):
 
 
 def optimal_n_init_kmeans(X, n_init_range, n_clusters=2, iters=3):
+    """Compute the inertia of the solution for a KMeans model for a variety of n_inits, we do this in parallel"""
     X = StandardScaler().fit_transform(X)
 
     with Pool(compute_num_cores_to_utilise()) as pool:
@@ -50,6 +54,9 @@ def optimal_n_init_kmeans(X, n_init_range, n_clusters=2, iters=3):
 
 
 def _optimal_n_init_gmm_parallel(X, n_init, n_components=2, iters=5):
+    """The underlying function called by optimal_n_init_gmm, extracting this piece of the logic into a separate
+    function allows us to parallelize the computation of the log likelihood over multiple n_inits.
+    """
     return np.array(
         [
             GaussianMixture(
@@ -63,6 +70,7 @@ def _optimal_n_init_gmm_parallel(X, n_init, n_components=2, iters=5):
 
 
 def optimal_n_init_gmm(X, n_init_range, n_components=2, iters=5):
+    """Compute the log likelihood of the solution for a GMM model for a variety of n_inits, we do this in parallel"""
     X = StandardScaler().fit_transform(X)
 
     with Pool(compute_num_cores_to_utilise()) as pool:
@@ -83,6 +91,9 @@ def optimal_n_init_gmm(X, n_init_range, n_components=2, iters=5):
 
 
 def _compute_silhouette_score_parallel(model, X, n_clusters, n_init, iters=10):
+    """The underlying function called by compute_silhouette_score, extracting this piece of the logic into a separate
+    function allows us to parallelize the computation of the silhouette scores over each n_clusters."""
+
     def get_instantiated_model(model, n_clusters, random_state):
         if model == 'kmeans':
             return KMeans(
@@ -111,6 +122,27 @@ def _compute_silhouette_score_parallel(model, X, n_clusters, n_init, iters=10):
 def compute_silhouette_score(
     model: Literal['kmeans', 'gmm'], X, cluster_range, n_init=1, iters=5
 ):
+    """
+    Compute the silhouette score for a variety of n_clusters, we do this in parallel.
+
+    Parameters
+    ----------
+    model
+        The model to compute for, either 'kmeans' or 'gmm'.
+    X
+        The data to compute the silhouette score for.
+    cluster_range
+        The range of n_clusters to compute the silhouette score for.
+    n_init
+        The number of initializations to use for the model.
+    iters
+        The number of iterations to run the model for.
+
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing the mean and standard deviation of the silhouette scores for each n_clusters.
+    """
     X = StandardScaler().fit_transform(X)
 
     with Pool(compute_num_cores_to_utilise()) as pool:
@@ -151,6 +183,7 @@ def q5a():
     )
     gmm_silhouette_scores = compute_silhouette_score('gmm', X_scaled, range(2, 10))
 
+    # Plot the silhouette scores
     fig, ax = plt.subplots()
 
     plt.errorbar(

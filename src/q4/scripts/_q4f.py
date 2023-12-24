@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
@@ -12,6 +11,7 @@ from src.utils import (
     format_axes,
     compute_most_important_features_logit,
     compute_rolling_intersection_pct,
+    load_dataframe_from_csv,
 )
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,18 +19,25 @@ from ._q4e import compute_most_important_features_random_forest
 
 
 def plot_feature_importance_with_rolling_overlap(X, y):
+    """
+    Plots the feature importance for a LogisticRegression model and a RandomForestClassifier model, and plots the
+    rolling overlap between the two models, on the provided dataset.
+    """
     X = X.copy()
     y = y.copy()
 
+    # Compute the feature importances on both models
     (
         feature_importance_logit,
         most_importance_features_logit,
     ) = compute_most_important_features_logit(X, y)
+
     (
         feature_importance_rf,
         most_importance_features_rf,
     ) = compute_most_important_features_random_forest(X, y)
 
+    # Compute the rolling overlap between the two models
     rolling_overlap = (
         compute_rolling_intersection_pct(
             feature_importance_logit['feature'].values,
@@ -39,9 +46,11 @@ def plot_feature_importance_with_rolling_overlap(X, y):
         * 100
     )
 
+    # And plot
     fig, ax = plot_feature_importance(
         feature_importance_logit, most_importance_features_logit, label='NMSLI'
     )
+
     plt.ylabel('Cum. Norm. Mean Squared Logit Importance (NMSLI)')
 
     ax2 = ax.twinx()
@@ -72,8 +81,9 @@ def plot_feature_importance_with_rolling_overlap(X, y):
 def q4f():
     cwd = os.path.dirname(os.path.realpath(__file__))
 
-    data = pd.read_csv(
-        f'{cwd}/../outputs/ADS_baselineDataset_preprocessed.csv', index_col=0
+    # Load data
+    data = load_dataframe_from_csv(
+        __file__, 'ADS_baselineDataset_preprocessed.csv', index_col=0
     )
 
     data, classifications = data[data.columns[:-1]], data['type']
@@ -92,10 +102,12 @@ def q4f():
         ]
     )
 
+    # Compute the confusion matrix and classification report for the LogisticRegression model, using all features
     report, cmatrix, test_set_classification_error = cross_validate_report(
         X, y, pipeline, n_splits=5
     )
 
+    # Output the confusion matrix and classification report
     tbl = format_contingency_table(
         np.round(cmatrix.values, 3),
         columns=['1', '2', '3', 'Tot. (actual)'],
@@ -117,7 +129,8 @@ def q4f():
 
     save_fig(__file__, 'q4f_classification_report_all_feats.png')
 
-    # Now compute the most important features
+    # Now, we'll try with reduced features
+    # Compute the most important features
     (
         feature_importance,
         most_importance_features,
@@ -128,10 +141,12 @@ def q4f():
 
     X_subset = data[most_importance_features['feature']].copy().values
 
+    # Compute the confusion matrix and classification report for the LogisticRegression model, using reduced features
     report, cmatrix, test_set_classification_error = cross_validate_report(
         X_subset, y, pipeline, n_splits=5
     )
 
+    # Output the confusion matrix and classification report
     tbl = format_contingency_table(
         np.round(cmatrix.values, 3),
         columns=['1', '2', '3', 'Tot. (actual)'],

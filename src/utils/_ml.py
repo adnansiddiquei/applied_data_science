@@ -87,6 +87,7 @@ def compute_most_important_features_logit(X: np.ndarray, y: np.ndarray):
 
 
 def compute_most_important_features_random_forest(X: np.ndarray, y: np.ndarray):
+    """Compute the most important features using the Gini importance by training a RandomForestClassifier"""
     X = X.copy()
     y = y.copy()
 
@@ -94,6 +95,7 @@ def compute_most_important_features_random_forest(X: np.ndarray, y: np.ndarray):
 
     clf.fit(X, y)
 
+    # Re-format the clf.feature_importances_) into a DataFrame
     feature_importance = (
         pd.DataFrame(clf.feature_importances_)
         .reset_index()
@@ -105,10 +107,13 @@ def compute_most_important_features_random_forest(X: np.ndarray, y: np.ndarray):
     feature_importance['feature'] = [
         f'Fea{feature + 1}' for feature in feature_importance['feature']
     ]
+
+    # Add the cumulative importance
     feature_importance['cumulative_importance'] = feature_importance[
         'gini_importance'
     ].cumsum()
 
+    # Compute the subset of the most important features that contribute to 95% of the cumulative importance
     most_importance_features = feature_importance[
         feature_importance['cumulative_importance'].round(4) <= 0.95
     ]
@@ -124,12 +129,15 @@ def cross_validate_report(
     random_state: int = 3438,
 ):
     """
-    1 - Take a model, and dataset
+    1 - Take a classification model, and dataset
     2 - Use k-fold cross validation to compute the classification report, confusion matrix and test set classification
            error for each fold. The average of these values is returned.
+
+    This function is generalised to create these reports for any classification model.
     """
     kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
 
+    # These arrays will store the results
     accuracy_scores = np.array([])
 
     precision_scores = np.empty((0, 5))
@@ -140,15 +148,19 @@ def cross_validate_report(
     # confusion matrix
     cmatrix = np.zeros((3, 3))
 
+    # For each fold, compute the classification report, confusion matrix and test set classification error
     for train_index, test_index in kf.split(X, y):
+        # Compute y_pred
         X_train, X_test = X[train_index], X[test_index]
         y_test, y_pred = (
             y[test_index],
             model.fit(X_train, y[train_index]).predict(X_test),
         )
 
+        # Add the new confusion matrix to the existing one
         cmatrix += confusion_matrix(y_test, y_pred, labels=[1, 2, 3], normalize='all')
 
+        # Compute the macro avg, weighted avg and normal precision, recall and f1 scores
         precision, recall, f1_score, support = precision_recall_fscore_support(
             y_test, y_pred, average=None
         )
@@ -156,10 +168,12 @@ def cross_validate_report(
         weighted_avg = precision_recall_fscore_support(
             y_test, y_pred, average='weighted'
         )[0:3]
+
         macro_avg = precision_recall_fscore_support(y_test, y_pred, average='macro')[
             0:3
         ]
 
+        # Add the new scores to the existing ones
         accuracy_scores = np.append(accuracy_scores, accuracy_score(y_test, y_pred))
 
         precision_scores = np.vstack(
@@ -185,6 +199,7 @@ def cross_validate_report(
 
         support_list = np.vstack([support_list, support])
 
+    # Compute the report as the average of the scores
     report = pd.DataFrame(
         {
             'Precision': precision_scores.mean(axis=0),
@@ -197,6 +212,7 @@ def cross_validate_report(
         index=['1', '2', '3', 'Macro Avg', 'Weighted Avg'],
     )
 
+    # Average thee confusion matrix
     cmatrix = pd.DataFrame(
         cmatrix / n_splits, index=['1', '2', '3'], columns=['1', '2', '3']
     )
@@ -205,6 +221,7 @@ def cross_validate_report(
 
     test_set_classification_error = 1 - accuracy_scores.mean()
 
+    # Return the report, confusion matrix and test set classification error
     return report, cmatrix, test_set_classification_error
 
 

@@ -6,27 +6,30 @@ import pandas as pd
 
 
 def q1e():
+    # Perform the k-means clustering to get the clusters from each model: kmeans_1_all, kmeans_2_all
     _contingency_table, tbl, kmeans_1_all, kmeans_2_all = kmeans_on_dataset_a(
         n_clusters=3, random_state=3438
     )
 
+    # Load the dataset
     data = load_dataset(
         'A_NoiseAdded.csv',
         drop_columns=['Unnamed: 0', 'classification'],
         standardise=True,
     )
 
+    # Perform PCA
     pca = PCA(n_components=2)
     pca.fit(data)
 
     # Compute the scores on each observation
     z = pd.DataFrame(pca.transform(data))
 
-    # Add the classifications to the DataFrame
+    # Add the classifications to the scores DataFrame
     z['classification_1'] = kmeans_1_all
     z['classification_2'] = kmeans_2_all
 
-    # Plot the PCA and the classifications together
+    # Plot the PCA, colour coded by the classifications
     color_map = {0: 'blue', 1: 'red', 2: 'green'}
     fig, ax = plt.subplots(figsize=(16, 6), nrows=1, ncols=2)
 
